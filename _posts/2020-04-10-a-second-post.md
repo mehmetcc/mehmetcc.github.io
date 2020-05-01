@@ -1,0 +1,9 @@
+---
+layout: page
+title:  "A second post for some testing"
+subtitle: "This post is for to test whether the CNAME records function properly"
+date:   2016-05-01 12:00:00 +0530
+categories: ["general"]
+---
+
+Hmm, let's see
