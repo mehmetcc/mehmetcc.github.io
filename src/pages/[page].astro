@@ -1,25 +1,25 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import { config } from '../config';
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { config } from "../config";
 
 export async function getStaticPaths({ paginate }) {
-  const allPosts = await getCollection('posts');
-  const sortedPosts = allPosts.sort((a, b) => 
-    b.data.pubDate.getTime() - a.data.pubDate.getTime()
+  const allPosts = await getCollection("posts");
+  const sortedPosts = allPosts.sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
   );
 
   // Start from page 2 since page 1 is handled by index.astro
   const postsPerPage = config.pagination.postsPerPage;
   const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
-  
+
   // Only generate pages 2 and onwards
   const pages = [];
   for (let i = 2; i <= totalPages; i++) {
     const startIndex = (i - 1) * postsPerPage;
     const endIndex = startIndex + postsPerPage;
     const pagePosts = sortedPosts.slice(startIndex, endIndex);
-    
+
     pages.push({
       params: { page: i.toString() },
       props: {
@@ -29,7 +29,7 @@ export async function getStaticPaths({ paginate }) {
       },
     });
   }
-  
+
   return pages;
 }
 
@@ -37,49 +37,69 @@ const { posts, currentPage, totalPages } = Astro.props;
 const canonicalURL = new URL(`/${currentPage}`, config.site.url);
 ---
 
-<Layout 
+<Layout
   title={`${config.site.title} - Page ${currentPage}`}
   description={config.site.description}
   canonicalURL={canonicalURL}
 >
   <article>
-    {posts.map((post) => (
-      <section class="post-preview">
-        <h2><a href={`/posts/${post.slug}`}>{post.data.title}</a></h2>
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
-        </time>
-        <p>{post.data.description}</p>
-        <a href={`/posts/${post.slug}`} class="read-more-link">{config.navigation.readMore}</a>
-      </section>
-    ))}
+    {
+      posts.map((post) => (
+        <section class="post-preview">
+          <h2>
+            <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+          </h2>
+          <time datetime={post.data.pubDate.toISOString()}>
+            {post.data.pubDate.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+          <p>{post.data.description}</p>
+          <a href={`/posts/${post.slug}`} class="read-more-link">
+            {config.navigation.readMore}
+          </a>
+        </section>
+      ))
+    }
   </article>
 
-  {totalPages > 1 && (
-    <nav class="pagination">
-      <div class="pagination-links">
-        {currentPage > 1 ? (
-          <a href={currentPage === 2 ? '/' : `/${currentPage - 1}`} class="pagination-link pagination-prev">
-            {config.navigation.previous}
-          </a>
-        ) : (
-          <span class="pagination-link pagination-prev disabled">{config.navigation.previous}</span>
-        )}
-        <span class="pagination-info">Page {currentPage} of {totalPages}</span>
-        {currentPage < totalPages ? (
-          <a href={`/${currentPage + 1}`} class="pagination-link pagination-next">
-            {config.navigation.next}
-          </a>
-        ) : (
-          <span class="pagination-link pagination-next disabled">{config.navigation.next}</span>
-        )}
-      </div>
-    </nav>
-  )}
+  {
+    totalPages > 1 && (
+      <nav class="pagination">
+        <div class="pagination-links">
+          {currentPage > 1 ? (
+            <a
+              href={currentPage === 2 ? "/" : `/${currentPage - 1}`}
+              class="pagination-link pagination-prev"
+            >
+              {config.navigation.previous}
+            </a>
+          ) : (
+            <span class="pagination-link pagination-prev disabled">
+              {config.navigation.previous}
+            </span>
+          )}
+          <span class="pagination-info">
+            Page {currentPage} of {totalPages}
+          </span>
+          {currentPage < totalPages ? (
+            <a
+              href={`/${currentPage + 1}`}
+              class="pagination-link pagination-next"
+            >
+              {config.navigation.next}
+            </a>
+          ) : (
+            <span class="pagination-link pagination-next disabled">
+              {config.navigation.next}
+            </span>
+          )}
+        </div>
+      </nav>
+    )
+  }
 </Layout>
 
 <style>
@@ -122,7 +142,7 @@ const canonicalURL = new URL(`/${currentPage}`, config.site.url);
   }
 
   .read-more-link::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
@@ -160,7 +180,7 @@ const canonicalURL = new URL(`/${currentPage}`, config.site.url);
   }
 
   .pagination-link::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
@@ -184,4 +204,3 @@ const canonicalURL = new URL(`/${currentPage}`, config.site.url);
     display: none;
   }
 </style>
-

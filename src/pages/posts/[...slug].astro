@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import { config } from '../../config';
-import { Facebook, X as Twitter, Reddit } from 'simple-icons-astro';
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { config } from "../../config";
+import { Facebook, X as Twitter, Reddit } from "simple-icons-astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
+  const posts = await getCollection("posts");
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -19,8 +19,8 @@ const canonicalURL = new URL(`/posts/${post.slug}`, config.site.url);
 const pubDateISO = post.data.pubDate.toISOString();
 ---
 
-<Layout 
-  title={post.data.title} 
+<Layout
+  title={post.data.title}
   description={post.data.description}
   canonicalURL={canonicalURL}
 >
@@ -28,11 +28,13 @@ const pubDateISO = post.data.pubDate.toISOString();
     <header class="post-header">
       <h1>{post.data.title}</h1>
       <time datetime={pubDateISO}>
-        {post.data.pubDate.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        })}
+        {
+          post.data.pubDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
       </time>
     </header>
 
@@ -42,43 +44,69 @@ const pubDateISO = post.data.pubDate.toISOString();
 
     <nav class="post-footer-nav">
       <div class="footer-left">
-        <a href={`https://www.facebook.com/sharer/sharer.php?u=${canonicalURL}`} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" class="share-btn">
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${canonicalURL}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Share on Facebook"
+          class="share-btn"
+        >
           <Facebook />
         </a>
-        <a href={`https://twitter.com/intent/tweet?url=${canonicalURL}&text=${post.data.title}`} target="_blank" rel="noopener noreferrer" aria-label="Share on X" class="share-btn">
+        <a
+          href={`https://twitter.com/intent/tweet?url=${canonicalURL}&text=${post.data.title}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Share on X"
+          class="share-btn"
+        >
           <Twitter />
         </a>
-        <a href={`https://www.reddit.com/submit?url=${canonicalURL}&title=${post.data.title}`} target="_blank" rel="noopener noreferrer" aria-label="Share on Reddit" class="share-btn">
+        <a
+          href={`https://www.reddit.com/submit?url=${canonicalURL}&title=${post.data.title}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Share on Reddit"
+          class="share-btn"
+        >
           <Reddit />
         </a>
       </div>
       <div class="footer-right">
-        <a href="/" class="return-back-link" onclick="event.preventDefault(); history.back();">{config.navigation.returnBack}</a>
+        <a
+          href="/"
+          class="return-back-link"
+          onclick="event.preventDefault(); history.back();"
+          >{config.navigation.returnBack}</a
+        >
       </div>
     </nav>
   </article>
 </Layout>
 
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": post.data.title,
-  "description": post.data.description,
-  "datePublished": pubDateISO,
-  "dateModified": pubDateISO,
-  "author": {
-    "@type": "Organization",
-    "name": config.site.title
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": config.site.title
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": canonicalURL.toString()
-  }
-})} />
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: pubDateISO,
+    dateModified: pubDateISO,
+    author: {
+      "@type": "Organization",
+      name: config.site.title,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: config.site.title,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalURL.toString(),
+    },
+  })}
+/>
 
 <style>
   .post {
@@ -182,7 +210,8 @@ const pubDateISO = post.data.pubDate.toISOString();
     color: #555;
   }
 
-  .footer-right {}
+  .footer-right {
+  }
 
   .return-back-link {
     display: inline-block;
@@ -193,7 +222,7 @@ const pubDateISO = post.data.pubDate.toISOString();
   }
 
   .return-back-link::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
