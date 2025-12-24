@@ -2,7 +2,7 @@
 export const config = {
   // Site metadata
   site: {
-    title: "My Unnecessary Ramblings",
+    title: "Works on My Machine",
     description: "A blog where I post about algorithms, computer science, functional programming, and some other random things.",
     url: "https://mehmetcan.io",
   },

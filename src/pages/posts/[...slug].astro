@@ -66,29 +66,31 @@ const pubDateISO = post.data.pubDate.toISOString();
 
 <style>
   .post {
-    max-width: 700px;
+    /* max-width is handled by .container in Layout.astro */
     margin: 0 auto;
   }
 
   .post-header {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-gray-medium);
+    text-align: center;
   }
 
   .post-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
   }
 
   .post-header time {
     display: block;
-    color: #666;
+    color: var(--color-gray-dark);
     font-size: 0.875rem;
   }
 
   .post-content {
-    line-height: 1.8;
+    /* line-height is inherited from body */
   }
 
   .post-content :global(p) {
@@ -116,23 +118,22 @@ const pubDateISO = post.data.pubDate.toISOString();
   }
 
   .post-content :global(blockquote) {
-    border-left: 3px solid #e5e5e5;
+    border-left: 3px solid var(--color-gray-medium);
     padding-left: 1.5rem;
     margin: 2rem 0;
-    color: #666;
+    color: var(--color-gray-dark);
     font-style: italic;
   }
 
   .post-content :global(code) {
-    background-color: #f5f5f5;
+    background-color: var(--color-gray-light);
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 0.9em;
-    font-family: 'Courier New', monospace;
   }
 
   .post-content :global(pre) {
-    background-color: #f5f5f5;
+    background-color: var(--color-gray-light);
     padding: 1.5rem;
     border-radius: 3px;
     overflow-x: auto;
@@ -147,13 +148,13 @@ const pubDateISO = post.data.pubDate.toISOString();
   .post-footer-nav {
     margin-top: 4rem;
     padding-top: 2rem;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid var(--color-gray-medium);
   }
 
   .return-back-link {
     display: inline-block;
     position: relative;
-    color: #000000;
+    color: var(--color-black);
     text-decoration: none;
     font-size: 0.875rem;
     margin: 0;
@@ -166,7 +167,7 @@ const pubDateISO = post.data.pubDate.toISOString();
     left: 0;
     width: 0;
     height: 1px;
-    background-color: #000000;
+    background-color: var(--color-black);
     transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
