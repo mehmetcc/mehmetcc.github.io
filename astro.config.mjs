@@ -1,11 +1,12 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import rehypePrettyCode from 'rehype-pretty-code';
+import github from '@astrojs/github-pages';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'static',
-  site: 'https://mehmetcc.github.io',
+  site: 'https://mehmetcan.io',
+  integrations: [github()],
   markdown: {
     rehypePlugins: [
       [rehypePrettyCode, {
