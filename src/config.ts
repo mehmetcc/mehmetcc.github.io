@@ -3,7 +3,8 @@ export const config = {
   // Site metadata
   site: {
     title: "Works on My Machine",
-    description: "A blog where I post about algorithms, computer science, functional programming, and some other random things.",
+    description:
+      "A blog where I post about algorithms, computer science, functional programming, and some other random things.",
     url: "https://mehmetcan.io",
   },
 
@@ -30,4 +31,3 @@ export const config = {
     returnBack: "Return back",
   },
 };
-
