@@ -15,7 +15,7 @@ export const config = {
 
   // Header
   header: {
-    title: "My Unnecessary Ramblings",
+    title: "Works on My Machine",
   },
 
   // Footer
