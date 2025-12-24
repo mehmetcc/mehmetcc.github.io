@@ -1,0 +1,161 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { config } from '../config';
+
+const allPosts = await getCollection('posts');
+const sortedPosts = allPosts.sort((a, b) => 
+  b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const postsPerPage = config.pagination.postsPerPage;
+const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+const currentPage = 1;
+const startIndex = (currentPage - 1) * postsPerPage;
+const endIndex = startIndex + postsPerPage;
+const posts = sortedPosts.slice(startIndex, endIndex);
+
+const canonicalURL = new URL('/', config.site.url);
+---
+
+<Layout 
+  title={config.site.title} 
+  description={config.site.description}
+  canonicalURL={canonicalURL}
+>
+  <article>
+    {posts.map((post) => (
+      <section class="post-preview">
+        <h2><a href={`/posts/${post.slug}`}>{post.data.title}</a></h2>
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </time>
+        <p>{post.data.description}</p>
+        <a href={`/posts/${post.slug}`} class="read-more-link">{config.navigation.readMore}</a>
+      </section>
+    ))}
+  </article>
+
+  {totalPages > 1 && (
+    <nav class="pagination">
+      <div class="pagination-links">
+        <span class="pagination-link pagination-prev disabled">{config.navigation.previous}</span>
+        <span class="pagination-info">Page {currentPage} of {totalPages}</span>
+        {currentPage < totalPages ? (
+          <a href="/2" class="pagination-link pagination-next">
+            {config.navigation.next}
+          </a>
+        ) : (
+          <span class="pagination-link pagination-next disabled">{config.navigation.next}</span>
+        )}
+      </div>
+    </nav>
+  )}
+</Layout>
+
+<style>
+  article {
+    margin-bottom: 3rem;
+  }
+
+  .post-preview {
+    margin-bottom: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .post-preview:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .post-preview h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .post-preview time {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .post-preview p {
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  .read-more-link {
+    display: inline-block;
+    position: relative;
+    color: #000000;
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+
+  .read-more-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #000000;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .read-more-link:hover::after {
+    width: 100%;
+  }
+
+  .pagination {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .pagination-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pagination-info {
+    color: #666;
+    font-size: 0.875rem;
+  }
+
+  .pagination-link {
+    position: relative;
+    color: var(--color-black);
+  }
+
+  .pagination-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-black);
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .pagination-link:hover::after {
+    width: 100%;
+  }
+
+  .pagination-link.disabled {
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .pagination-link.disabled::after {
+    display: none;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+import { config } from '../config';
+
+const { title } = config.header;
+---
+
+<header>
+  <a href="/">
+    <h1 class="site-title">{title}</h1>
+  </a>
+</header>
+
+<style>
+  header {
+    padding: 1rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  header a {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+  }
+
+  .site-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: bold;
+    font-size: 2rem;
+    margin: 0;
+    line-height: 1.5;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    border-top: 0.1em solid currentColor;
+    border-bottom: 0.1em solid currentColor;
+    transition: border-width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  header a:hover .site-title {
+    border-top-width: 0.15em;
+    border-bottom-width: 0.15em;
+  }
+</style>
+

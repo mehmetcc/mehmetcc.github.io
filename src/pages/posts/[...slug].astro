@@ -1,0 +1,177 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { config } from '../../config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const canonicalURL = new URL(`/posts/${post.slug}`, config.site.url);
+const pubDateISO = post.data.pubDate.toISOString();
+---
+
+<Layout 
+  title={post.data.title} 
+  description={post.data.description}
+  canonicalURL={canonicalURL}
+>
+  <article class="post">
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <time datetime={post.data.pubDate.toISOString()}>
+        {post.data.pubDate.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}
+      </time>
+    </header>
+    <div class="post-content">
+      <Content />
+    </div>
+    <nav class="post-footer-nav">
+      <a href="/" class="return-back-link" onclick="event.preventDefault(); history.back();">{config.navigation.returnBack}</a>
+    </nav>
+  </article>
+</Layout>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": pubDateISO,
+  "dateModified": pubDateISO,
+  "author": {
+    "@type": "Organization",
+    "name": config.site.title
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": config.site.title
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalURL.toString()
+  }
+})} />
+
+<style>
+  .post {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .post-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .post-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-header time {
+    display: block;
+    color: #666;
+    font-size: 0.875rem;
+  }
+
+  .post-content {
+    line-height: 1.8;
+  }
+
+  .post-content :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content :global(h2) {
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+  }
+
+  .post-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .post-content :global(blockquote) {
+    border-left: 3px solid #e5e5e5;
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    color: #666;
+    font-style: italic;
+  }
+
+  .post-content :global(code) {
+    background-color: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: 'Courier New', monospace;
+  }
+
+  .post-content :global(pre) {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 3px;
+    overflow-x: auto;
+    margin: 2rem 0;
+  }
+
+  .post-content :global(pre code) {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .post-footer-nav {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .return-back-link {
+    display: inline-block;
+    position: relative;
+    color: #000000;
+    text-decoration: none;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .return-back-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #000000;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .return-back-link:hover::after {
+    width: 100%;
+  }
+</style>
+
