@@ -37,6 +37,16 @@ const canonicalURL = new URL("/", config.site.url);
               day: "numeric",
             })}
           </time>
+          {post.data.tags && post.data.tags.length > 0 && (
+            <div class="post-tags">
+              {post.data.tags.map((tag, index) => (
+                <>
+                  <a href={`/categories/${tag}`}>{tag}</a>
+                  {index < post.data.tags.length - 1 && ' · '}
+                </>
+              ))}
+            </div>
+          )}
 
           <p>{post.data.description}</p>
           <a href={`/posts/${post.slug}`} class="read-more-link">
@@ -95,7 +105,23 @@ const canonicalURL = new URL("/", config.site.url);
 
   .post-preview time {
     display: block;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem; /* Adjusted margin to bring tags closer */
+  }
+
+  .post-tags {
+    font-size: 0.8em;
+    color: #999;
+    margin-bottom: 1rem; /* Space between tags and description */
+  }
+
+  .post-tags a {
+    color: #999;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-tags a:hover {
+    color: var(--color-black);
   }
 
 
