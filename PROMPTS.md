@@ -1,11 +1,13 @@
 # Feature Request: Tag & Category Navigation (Astro)
 
 ## Overview
+
 Implement **tag support** across the site and add a persistent **Categories** navigation link that allows users to browse and filter posts by tag. The site is built with **Astro**, so the solution should follow Astro best practices and conventions.
 
 ---
 
 ## Categories Link (Global UI)
+
 - Add a link labeled **“Categories”** that appears on **every page**.
 - Position the link on the **right-hand side** of the layout.
   - Treat this as a global UI element (similar in scope to a header or footer, but aligned to the right).
@@ -18,6 +20,7 @@ Implement **tag support** across the site and add a persistent **Categories** na
 ---
 
 ## Tag Data Model
+
 - Posts can have **one or more tags**.
 - Tags should be defined in frontmatter (e.g. `tags: ["astro", "css", "performance"]`).
 - Ensure tags are:
@@ -27,6 +30,7 @@ Implement **tag support** across the site and add a persistent **Categories** na
 ---
 
 ## Categories Page (Tag Index)
+
 - Clicking **Categories** navigates to a dedicated page that lists **all available tags**.
 - This page should be:
   - Generated at build time using Astro’s static generation.
@@ -39,6 +43,7 @@ Implement **tag support** across the site and add a persistent **Categories** na
 ---
 
 ## Tag Pages (Filtered Post Lists)
+
 - Each tag should have its own page showing **only posts associated with that tag**.
 - Tag pages must support **pagination**:
   - Use the **existing pagination configuration** to determine posts per page.
@@ -50,6 +55,7 @@ Implement **tag support** across the site and add a persistent **Categories** na
 ---
 
 ## Routing & Structure
+
 - Suggested routes:
   - `/categories/` → tag index
   - `/categories/[tag]/` → paginated posts by tag
@@ -59,6 +65,7 @@ Implement **tag support** across the site and add a persistent **Categories** na
 ---
 
 ## Styling & UX
+
 - Reuse existing CSS, utility classes, or design tokens where possible.
 - Avoid heavy client-side JavaScript—prefer Astro’s static-first approach.
 - Ensure the UI is accessible (keyboard navigation, semantic markup).
@@ -66,6 +73,7 @@ Implement **tag support** across the site and add a persistent **Categories** na
 ---
 
 ## Additional Notes
+
 - Favor build-time computation over runtime logic.
 - Keep the implementation clean, maintainable, and easy to extend.
 - Avoid breaking existing pagination, layouts, or post pages.
