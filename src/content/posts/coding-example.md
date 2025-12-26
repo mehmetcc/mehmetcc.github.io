@@ -2,6 +2,7 @@
 title: "Code Highlighting Example"
 pubDate: 2025-12-24
 description: "Example snippets for Haskell, Rust, Java, and Python to demonstrate syntax highlighting."
+tags: ["code", "haskell", "rust", "java", "python"]
 ---
 
 Below are short examples for Haskell, Rust, Java and Python to demonstrate code fences and syntax highlighting.

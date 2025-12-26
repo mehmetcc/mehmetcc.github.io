@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { config } from "../../config";
+
+const allPosts = await getCollection("posts");
+const allTags = allPosts.flatMap((post) => post.data.tags || []);
+const uniqueTags = [...new Set(allTags)];
+---
+
+<Layout title="Categories" description="Browse posts by category">
+  <article>
+    <h1>Categories</h1>
+    <div class="tag-list">
+      {uniqueTags.map((tag, index) => (
+        <>
+          <a href={`/categories/${tag}`}>{tag}</a>
+          {index < uniqueTags.length - 1 && ' · '}
+        </>
+      ))}
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .tag-list {
+    font-size: 1.2em; /* Larger font size for the main categories page */
+    color: #999;
+    margin-top: 1rem;
+    text-align: left;
+    line-height: 2;
+  }
+
+  .tag-list a {
+    color: #999;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .tag-list a:hover {
+    color: var(--color-black);
+  }
+</style>

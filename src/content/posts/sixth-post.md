@@ -2,6 +2,7 @@
 title: "Configuration as Philosophy"
 pubDate: 2024-06-18
 description: "Centralizing constants creates maintainability and clarity."
+tags: ["config", "maintainability", "philosophy"]
 ---
 
 When magic numbers and hardcoded strings scatter throughout code, maintenance becomes difficult. Changing a value means finding every instance, checking context, risking inconsistency.

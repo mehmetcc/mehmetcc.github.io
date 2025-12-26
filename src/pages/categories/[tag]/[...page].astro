@@ -1,31 +1,45 @@
 ---
 import { getCollection } from "astro:content";
-import Layout from "../layouts/Layout.astro";
-import { config } from "../config";
+import Layout from "../../../layouts/Layout.astro";
+import { config } from "../../../config";
 
-const allPosts = await getCollection("posts");
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection("posts");
+  const allTags = allPosts.flatMap((post) => post.data.tags || []);
+  const uniqueTags = [...new Set(allTags)];
+
+  return uniqueTags.flatMap((tag) => {
+    const filteredPosts = allPosts.filter((post) =>
+      post.data.tags?.includes(tag)
+    );
+    const sortedPosts = filteredPosts.sort(
+      (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+    );
+    return paginate(sortedPosts, {
+      params: { tag },
+      pageSize: config.pagination.postsPerPage,
+    });
+  });
+}
+
+const { page } = Astro.props;
+const { tag } = Astro.params;
+
+const canonicalURL = new URL(
+  `/categories/${tag}${page.currentPage > 1 ? `/${page.currentPage}` : ""}`,
+  config.site.url
 );
-
-const postsPerPage = config.pagination.postsPerPage;
-const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
-const currentPage = 1;
-const startIndex = (currentPage - 1) * postsPerPage;
-const endIndex = startIndex + postsPerPage;
-const posts = sortedPosts.slice(startIndex, endIndex);
-
-const canonicalURL = new URL("/", config.site.url);
 ---
 
 <Layout
-  title={config.site.title}
-  description={config.site.description}
+  title={`Posts tagged with "${tag}"`}
+  description={`Posts tagged with "${tag}"`}
   canonicalURL={canonicalURL}
 >
   <article>
+    <h1>Posts tagged with "{tag}"</h1>
     {
-      posts.map((post) => (
+      page.data.map((post) => (
         <section class="post-preview">
           <h2>
             <a href={`/posts/${post.slug}`}>{post.data.title}</a>
@@ -37,7 +51,16 @@ const canonicalURL = new URL("/", config.site.url);
               day: "numeric",
             })}
           </time>
-
+          {post.data.tags && post.data.tags.length > 0 && (
+            <div class="post-tags">
+              {post.data.tags.map((t, index) => (
+                <>
+                  <a href={`/categories/${t}`}>{t}</a>
+                  {index < post.data.tags.length - 1 && ' · '}
+                </>
+              ))}
+            </div>
+          )}
           <p>{post.data.description}</p>
           <a href={`/posts/${post.slug}`} class="read-more-link">
             {config.navigation.readMore}
@@ -48,17 +71,23 @@ const canonicalURL = new URL("/", config.site.url);
   </article>
 
   {
-    totalPages > 1 && (
+    page.totalPages > 1 && (
       <nav class="pagination">
         <div class="pagination-links">
-          <span class="pagination-link pagination-prev disabled">
-            {config.navigation.previous}
-          </span>
+          {page.url.prev ? (
+            <a href={page.url.prev} class="pagination-link pagination-prev">
+              {config.navigation.previous}
+            </a>
+          ) : (
+            <span class="pagination-link pagination-prev disabled">
+              {config.navigation.previous}
+            </span>
+          )}
           <span class="pagination-info">
-            Page {currentPage} of {totalPages}
+            Page {page.currentPage} of {page.totalPages}
           </span>
-          {currentPage < totalPages ? (
-            <a href="/2" class="pagination-link pagination-next">
+          {page.url.next ? (
+            <a href={page.url.next} class="pagination-link pagination-next">
               {config.navigation.next}
             </a>
           ) : (
@@ -98,7 +127,22 @@ const canonicalURL = new URL("/", config.site.url);
     margin-bottom: 1rem;
   }
 
+  .post-tags {
+    font-size: 0.8em;
+    color: #999;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
 
+  .post-tags a {
+    color: #999;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-tags a:hover {
+    color: var(--color-black);
+  }
 
   .post-preview p {
     color: #666;

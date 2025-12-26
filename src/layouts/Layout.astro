@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Categories from "../components/Categories.astro";
 import { config } from "../config";
 
 interface Props {
@@ -73,14 +74,14 @@ const metaDescription = description || config.site.description;
   </head>
   <body>
     <div class="container">
+      <Categories />
       <Header />
       <main>
         <slot />
       </main>
       <Footer />
     </div>
-  </body>
-</html>
+  </body></html>
 
 <style is:global>
   * {

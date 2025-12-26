@@ -56,6 +56,17 @@ const canonicalURL = new URL(`/${currentPage}`, config.site.url);
               day: "numeric",
             })}
           </time>
+          {post.data.tags && post.data.tags.length > 0 && (
+            <div class="tags-container">
+              <ul class="tag-list">
+                {post.data.tags.map((tag) => (
+                  <li>
+                    <a href={`/categories/${tag}`}>{tag}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <p>{post.data.description}</p>
           <a href={`/posts/${post.slug}`} class="read-more-link">
             {config.navigation.readMore}
@@ -126,6 +137,35 @@ const canonicalURL = new URL(`/${currentPage}`, config.site.url);
   .post-preview time {
     display: block;
     margin-bottom: 1rem;
+  }
+
+  .tags-container {
+    margin-bottom: 1rem;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.5rem;
+  }
+
+  .tag-list li a {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--color-gray-light);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--color-gray-dark);
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  .tag-list li a:hover {
+    background-color: var(--color-gray-medium);
+    color: var(--color-black);
   }
 
   .post-preview p {

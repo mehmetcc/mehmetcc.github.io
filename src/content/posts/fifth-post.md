@@ -2,6 +2,7 @@
 title: "Static Site Generation"
 pubDate: 2024-05-12
 description: "Why building at compile time makes sense for content-driven sites."
+tags: ["ssg", "webdev", "performance"]
 ---
 
 Static site generation returns web development to its roots: serving files that already exist, rather than generating them on demand.

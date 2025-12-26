@@ -2,6 +2,7 @@
 title: "Typography and Authority"
 pubDate: 2024-02-20
 description: "How typeface choices communicate meaning and establish credibility."
+tags: ["typography", "design", "communication"]
 ---
 
 Typography is the voice of the written word. The choice of font, weight, and spacing all contribute to how a message is received.

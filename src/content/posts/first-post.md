@@ -2,6 +2,7 @@
 title: "The Art of Minimalism"
 pubDate: 2024-01-15
 description: "Exploring the philosophy and practice of minimalism in design and life."
+tags: ["minimalism", "design", "philosophy"]
 ---
 
 Minimalism is not about having less. It's about having exactly what you need, nothing more, nothing less. In a world saturated with complexity, minimalism offers clarity.

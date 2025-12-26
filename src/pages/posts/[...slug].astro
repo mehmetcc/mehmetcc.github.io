@@ -36,6 +36,16 @@ const pubDateISO = post.data.pubDate.toISOString();
           })
         }
       </time>
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div class="post-tags">
+          {post.data.tags.map((tag, index) => (
+            <>
+              <a href={`/categories/${tag}`}>{tag}</a>
+              {index < post.data.tags.length - 1 && ' · '}
+            </>
+          ))}
+        </div>
+      )}
     </header>
 
     <div class="post-content">
@@ -130,7 +140,35 @@ const pubDateISO = post.data.pubDate.toISOString();
     display: block;
     color: var(--color-gray-dark);
     font-size: 0.875rem;
+    margin-bottom: 0.25rem;
   }
+
+  .post-tags {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .post-tags a {
+    color: #999;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-tags a:hover {
+    color: var(--color-black);
+  }
+
+  .post-tags span.separator {
+    color: #999;
+  }
+
+
+
+
+
+
 
   .post-content :global(p) {
     margin-bottom: 1.5rem;

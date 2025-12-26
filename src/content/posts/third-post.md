@@ -2,6 +2,7 @@
 title: "The Power of Monochrome"
 pubDate: 2024-03-10
 description: "Why black, white, and gray remain the most powerful color palette."
+tags: ["monochrome", "design", "visuals"]
 ---
 
 Color can distract. Monochrome focuses attention on content, structure, and meaning. When you remove color, you remove a layer of complexity that often obscures clarity.
