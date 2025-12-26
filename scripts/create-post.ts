@@ -46,6 +46,8 @@ function formatPubDate(date: Date): string {
 async function main(): Promise<void> {
   const title = await rl.question("Enter blog title: ");
   const description = await rl.question("Enter description: ");
+  const tagsInput = await rl.question("Enter tags (comma-separated): ");
+  const tags = tagsInput.split(",").map((tag) => tag.trim()).filter((tag) => tag.length > 0);
 
   const slug = title
     .toLowerCase()
@@ -60,6 +62,7 @@ async function main(): Promise<void> {
 title: "${title}"
 description: "${description}"
 pubDate: ${pubDate}
+tags: [${tags.map((tag) => `"${tag}"`).join(", ")}]
 ---
 `;
 
