@@ -19,10 +19,10 @@ For some reason `npm run dev` runs too slow, because it tries to load all the lo
 
 # TODO list
 
-[] Create tags
+[x] Create tags
 
-[] Create comment functionality. Think of introducing utterances or giscus, where you setup a repo for comments and they are being posted automatically
+[x] Create comment functionality. Think of introducing utterances or giscus, where you setup a repo for comments and they are being posted automatically
 
-[] Create an RSS feed.
+[x] Create an RSS feed.
 
-[] Show tags and the RSS feed link at the right-hand side of the project.
+[x] Show tags and the RSS feed link at the right-hand side of the project.
