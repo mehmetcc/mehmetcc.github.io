@@ -12,7 +12,6 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.14",
     "astro": "^5.16.6",
-    "shiki": "^3.20.0",
     "simple-icons-astro": "^16.1.0"
   },
   "devDependencies": {

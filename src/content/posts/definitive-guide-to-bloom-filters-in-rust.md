@@ -274,4 +274,211 @@ Now, there is a lot to unpack here. To do that, we need to understand a simple C
 ## Masking
 Now, let us go back to one of our earliest examples. We wanted to have a bit array of size 70, so we allocated two `u64` words to get there. But these are just integers, right? And we are dividing them to find bits? Most of us (including the author, yours truly) code in either Java or Python, and come up with web slop that somehow makes millions. We seldom hear about bits, and the last time we probably heard of words was during college, failing a Computer Architecture class.
 
-As a result, most of what we did up until now can be seen as a house of cards.
+As a result, most of what we did up until now can be seen as a house of cards. This is natural, and to be expected. But most of that will get cleared after we introduce what masking is.
+
+Let us imagine we have an 8-bit value:
+
+<!-- This used to be all text, until I let Gemini proof-read my work -->
+<!-- The code is unmaintainable mess, but I am not complaining about the way it looks -->
+<style>
+.bit-op-vis {
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    background-color: #282a36; /* Dracula background */
+    color: #f8f8f2; /* Dracula foreground */
+    padding: 1.5em;
+    border-radius: 8px;
+    margin: 2em 0;
+    font-size: 1.1em;
+    line-height: 1.8;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    overflow-x: auto;
+}
+.bit-op-vis .line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75em;
+}
+.bit-op-vis .line:last-child {
+    margin-bottom: 0;
+}
+.bit-op-vis .label {
+    min-width: 120px;
+    color: #8be9fd; /* Dracula cyan */
+    text-align: right;
+    padding-right: 1em;
+}
+.bit-op-vis .bits {
+    display: flex;
+}
+.bit-op-vis .bit {
+    width: 2.2ch;
+    text-align: center;
+}
+.bit-op-vis .bit.highlight {
+    color: #ffb86c; /* Dracula orange */
+    font-weight: bold;
+    transform: scale(1.1);
+}
+.bit-op-vis .separator {
+    width: 2ch;
+    text-align: center;
+    color: #6272a4; /* Dracula comment */
+}
+.bit-op-vis .op-symbol {
+    min-width: 120px;
+    color: #ff79c6; /* Dracula pink */
+    font-weight: bold;
+    text-align: right;
+    padding-right: 1em;
+}
+.bit-op-vis hr {
+    border: none;
+    border-top: 1px solid #6272a4; /* Dracula comment */
+    margin: 1em 0;
+}
+.bit-op-vis .comment {
+    color: #6272a4; /* Dracula comment */
+    font-style: italic;
+    margin-left: 2em;
+}
+.bit-op-vis .index-line .bit {
+    color: #bd93f9; /* Dracula purple */
+    font-size: 0.9em;
+}
+</style>
+
+<div class="bit-op-vis">
+  <div class="line">
+    <span class="label">value =</span>
+    <div class="bits">
+      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span>
+      <span class="separator">_</span>
+      <span class="bit">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
+    </div>
+    <span class="comment">// 0b1010_1101</span>
+  </div>
+</div>
+
+and we want to check bit 3 (counting from the right, starting at 0):
+
+<div class="bit-op-vis">
+  <div class="line index-line">
+    <span class="label">Bit index:</span>
+    <div class="bits">
+      <span class="bit">7</span><span class="bit">6</span><span class="bit">5</span><span class="bit">4</span>
+      <span class="separator"> </span>
+      <span class="bit">3</span><span class="bit">2</span><span class="bit">1</span><span class="bit">0</span>
+    </div>
+  </div>
+  <div class="line">
+    <span class="label">value:</span>
+    <div class="bits">
+      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span>
+      <span class="separator"> </span>
+      <span class="bit highlight">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
+    </div>
+  </div>
+</div>
+
+To focus on bit 3, we create a mask with `1` only at that position:
+
+<div class="bit-op-vis">
+  <div class="line">
+      <span class="label">mask =</span>
+      <div class="bits">
+          <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+          <span class="separator">_</span>
+          <span class="bit">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+      </div>
+      <span class="comment">// 1 &lt;&lt; 3, or 0b0000_1000</span>
+  </div>
+</div>
+
+Here’s another concept from college. If we apply **AND operator** to this value and mask:
+
+<div class="bit-op-vis">
+  <div class="line">
+    <span class="label">value</span>
+    <div class="bits">
+      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
+    </div>
+  </div>
+  <div class="line">
+    <span class="op-symbol">&amp;</span>
+    <div class="bits">
+      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+    </div>
+    <span class="comment">// mask</span>
+  </div>
+  <hr>
+  <div class="line">
+    <span class="label">result</span>
+    <div class="bits">
+      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+    </div>
+    <span class="comment">// non-zero</span>
+  </div>
+</div>
+
+We can check:
+- If bit 3 is `1`, result is non-zero.
+- If bit 3 is `0`, result is zero.
+
+If the value had been say:
+
+<div class="bit-op-vis">
+  <div class="line">
+    <span class="label">value</span>
+    <div class="bits">
+      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">0</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
+    </div>
+    <span class="comment">// 0b1010_0101</span>
+  </div>
+  <div class="line">
+    <span class="op-symbol">&amp;</span>
+    <div class="bits">
+      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+    </div>
+    <span class="comment">// mask</span>
+  </div>
+  <hr>
+  <div class="line">
+    <span class="label">result</span>
+    <div class="bits">
+      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+    </div>
+    <span class="comment">// zero</span>
+  </div>
+</div>
+
+From this, we can see that in the first value, bit 3 was 1 (result is non-zero), while in the second value, bit 3 was 0 (result is zero). This is great, because now we have a tool to check whether a bit is 0 or 1 in our arsenal.
+
+Similarly, if we apply **OR operator** to this value and mask:
+
+<div class="bit-op-vis">
+  <div class="line">
+    <span class="label">value</span>
+    <div class="bits">
+      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">0</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
+    </div>
+    <span class="comment">// original had bit 3 as 0</span>
+  </div>
+  <div class="line">
+    <span class="op-symbol">|</span>
+    <div class="bits">
+      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
+    </div>
+    <span class="comment">// mask</span>
+  </div>
+  <hr>
+  <div class="line">
+    <span class="label">result</span>
+    <div class="bits">
+      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
+    </div>
+    <span class="comment">// bit 3 is now 1</span>
+  </div>
+</div>
+
+Proving that by applying the **OR operator**, we can always set a specific bit to 1, no matter what its previous value was.
+
