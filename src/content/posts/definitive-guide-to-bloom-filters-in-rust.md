@@ -554,6 +554,6 @@ Feeding different seeds into this function **k** times:
 
 produces **k** different hash values while requiring only a single hash function. That saves the day, right? **Right**?
 
-Even though this saves us from the burden of maintaining **k** different functions, we still have to call a hash function **k** times. As we explained earlier, all of these calls cost too much. Luckily, we can do better:
+Even though this saves us from the burden of maintaining **k** different functions, we still have to call a hash function **k** times. As we explained earlier, all of these calls might cost too much. Luckily, we can do better:
 
 ### 2. Double Hashing
