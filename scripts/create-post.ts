@@ -20,18 +20,6 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-function getCurrentTimestamp(): string {
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const year = now.getFullYear();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-
-  return `${day}${month}${year}_${hours}${minutes}${seconds}`;
-}
-
 /**
  * YAML-native date format (YYYY-MM-DD)
  * Parses correctly into a Date object by Astro
@@ -56,7 +44,6 @@ async function main(): Promise<void> {
 
   const now = new Date();
   const pubDate = formatPubDate(now);
-  const timestamp = getCurrentTimestamp();
 
   const content = `---
 title: "${title}"
@@ -68,7 +55,7 @@ tags: [${tags.map((tag) => `"${tag}"`).join(", ")}]
 
   try {
     mkdirSync(POSTS_DIR, { recursive: true });
-    const filename = `${timestamp}_${slug}.md`;
+    const filename = `${slug}.md`;
     writeFileSync(`${POSTS_DIR}/${filename}`, content);
     console.log(`\nCreated post: ${filename}`);
   } catch (err) {
