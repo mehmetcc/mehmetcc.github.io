@@ -146,7 +146,7 @@ Bloom Filters are fixed-size. We also have to specify two different constants: *
 - **n** is the number of items we anticipate being inserted. 
 - **m** is the size of the bit array. The bigger the *m* is, the fewer false positives we will get.
 
-Choosing these constants carefully is crucial for an optimal Bloom Filter. Too many hash functions can slow down execution, since each hash function is computationally costly. Meanwhile, a very large bit array can increase memory usage. Luckily, there’s a way to mathematically choose the optimal values. We'll cover this during the implementation phase.
+Choosing these constants carefully is crucial for an optimal Bloom Filter. Too many hash functions can slow down execution, since each hash function call is computationally costly. Meanwhile, a very large bit array can increase memory usage. Luckily, there’s a way to mathematically choose the optimal values. We'll cover this during the implementation phase.
 
 ## Bit Arrays
 To have a functioning Bloom Filter, we need a bit array and a hash function implementation. Luckily, both are available within Rust ecosystem.
@@ -177,7 +177,7 @@ impl BitArray {
     ...
 }
 ```
-Notice the call to `div_ceil(64)` on our size. A bit array is just a bunch of bits stored together, and we organize them into 64-bit integers (u64) because that’s what the CPU likes to work with efficiently.
+Notice the call to `div_ceil(64)` on our size. A bit array is just a bunch of bits stored together, and we organize them into 64-bit integers (`u64`).
 
 Now imagine we want a bit array of size 70. If we just did normal integer division (70 / 64), we would get 1. That gives us only 64-bits, which isn’t enough to store all 70-bits.
 
@@ -201,7 +201,7 @@ impl BitArray {
 }
 ```
 
-As you can see, we first divide by 64 to find the word index, then perform a modulo operation to find the exact place of the bit. Furthermore, since peek is always going to be in the hot path of our program, we tell the compiler to always [inline](https://nnethercote.github.io/perf-book/inlining.html) it. That way, we gain a slight performance boost.
+Consequently, we first divide by 64 to find the word index, then perform a modulo operation to find the exact place of the bit. Furthermore, since peek is always going to be in the hot path of our program, we tell the compiler to always [inline](https://nnethercote.github.io/perf-book/inlining.html) it. That way, we gain a slight performance boost.
 
 
 We also perform an if-check to prevent possible overflows. Remember that our bit array is fixed in size, and attempting to insert more elements than it supports will cause all kinds of headaches.
@@ -245,7 +245,7 @@ Before starting this project, I skimmed through several Rust data structure impl
    
 As such, we are going to design our public-facing array API with these principles in mind.
 
-And now let us implement get and set methods:
+Let us implement get and set methods:
 
 ```rust
 impl BitArray {
@@ -269,16 +269,17 @@ impl BitArray {
 }
 ```
 
-Now, there is a lot to unpack here. To do that, we need to understand a simple Computer Science trick, called _masking_:
+There is a lot to unpack here. To do that, we need to understand a simple Computer Science trick, called _masking_:
 
 ## Masking
 Now, let us go back to one of our earliest examples. We wanted to have a bit array of size 70, so we allocated two `u64` words to get there. But these are just integers, right? And we are dividing them to find bits? Most of us (including the author, yours truly) code in either Java or Python, and come up with web slop that somehow makes millions. We seldom hear about bits, and the last time we probably heard of words was during college, failing a Computer Architecture class.
 
-As a result, most of what we did up until now can be seen as a house of cards. This is natural, and to be expected. But most of that will get cleared after we introduce what masking is.
+As a result, most of what we did up until now can be seen as a house of cards. This is natural, and to be expected. But I promise, all of this will come together once we understand how masking works.
 
 Let us imagine we have an 8-bit value:
 
-<!-- This used to be all text, until I let Gemini proof-read my work -->
+<!-- This used to be all text, until I let Gemini-CLI proof-read my work -->
+<!-- Being a good Samaritan, he gifted me with these amazing visuals -->
 <!-- The code is unmaintainable mess, but I am not complaining about the way it looks -->
 <style>
 .bit-op-vis {
@@ -424,7 +425,7 @@ We can check:
 - If bit 3 is `1`, result is non-zero.
 - If bit 3 is `0`, result is zero.
 
-If the value had been say:
+If the value had been, say:
 
 <div class="bit-op-vis">
   <div class="line">
@@ -481,4 +482,48 @@ Similarly, if we apply **OR operator** to this value and mask:
 </div>
 
 Proving that by applying the **OR operator**, we can always set a specific bit to 1, no matter what its previous value was.
+
+Now, let us take another look at our get and set methods:
+
+```rust
+impl BitArray {
+  ...
+    pub fn set(&mut self, index: usize) -> Option<bool> {
+        let lookup = self.peek(index)?;
+        let mask = 1u64 << lookup.bit_offset;
+        let byte = &mut self.bits[lookup.word_index];
+
+        let previous = (*byte & mask) != 0;
+        *byte |= mask;
+
+        Some(previous)
+    }
+
+    pub fn get(&self, index: usize) -> Option<bool> {
+        let lookup = self.peek(index)?;
+        Some((self.bits[lookup.word_index] & 
+        (1u64 << lookup.bit_offset)) != 0)
+    }
+}
+```
+
+As you can see, we start by calculating a mask, and one by one, for every bit we either apply **OR** or **AND** operators, for get and set, respectively.
+
+We will introduce a final method to our bit array implementation:
+
+```rust
+impl BitArray {
+  ...
+    pub fn count_ones(&self) -> usize {
+        self.bits
+            .iter()
+            .map(|word| word.count_ones() as usize)
+            .sum()
+    }
+}
+```
+
+This method helps us count the bits that are set to 1 and will be useful for our Bloom Filter implementation. And voilà! We have a working bit array implementation in place.
+
+## Hashes
 
