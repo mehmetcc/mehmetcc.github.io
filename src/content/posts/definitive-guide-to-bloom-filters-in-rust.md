@@ -4,9 +4,9 @@ description: "An in-depth exploration of key concepts behind Bloom Filters, with
 pubDate: 2025-12-27
 tags: ["Rust", "Data Structures", "Bloom Filter"]
 ---
-I read a Reddit post a while ago with a meme attached, making fun of people who had just learned about Arena's and Bloom Filters and tried to apply their new-found knowledge to everything. For what it's worth, if you have recently acquired a hammer, everything is a nail.
+I read a Reddit post a while ago with a meme attached, making fun of people who had just learned about Arenas and Bloom Filters and tried to apply their new-found knowledge to everything. For what it's worth, if you have recently acquired a hammer, everything is a nail.
 
-I know every programming language community has its own idea of what Arena's are, so it’s pointless to think of it as a single thing, but rather a concept of being totally zen. And maybe the real Arena's were the friends we made along the way.
+I know every programming language community has its own idea of what Arenas are, so it’s pointless to think of it as a single thing, but rather a concept of being totally zen. And maybe the real Arenas were the friends we made along the way.
 
 But Bloom Filters are different. They have been an integral part of the Computer Science ethos long before I was born and have been applied to many problems that are worth solving. I used them in a plethora of languages, implemented them over and over again. So I was confident enough in my practical skills to implement one. Only after running `cargo new bloom_filter`, I realized I did not know what I was supposed to do without copy-pasting a bunch of formulas I didn’t understand onto my screen.
 
@@ -19,7 +19,7 @@ A Bloom Filter works in a similar way. At its core, it answers a very specific q
 
 > Have I definitely not seen this face before?
 
-Notice the phrasing. Like me, a Bloom Filter can confidently say if it has *never seen* a face before.
+Notice the phrasing. Like me, a Bloom Filter can confidently say if it has _never seen_ a face before.
 
 - If it says no, you can trust it completely. That face is new. 
 - If it says yes, that's a maybe. It is hedging its bets. We’ve all had those embarrassing moments when we approach someone we think we know, only to realize it’s someone else.
@@ -153,7 +153,7 @@ To have a functioning Bloom Filter, we need a bit array and a hash function impl
 
 However, since the point of this exercise is to learn, we’ll implement our own bit array as well, like [real programmers](https://homepages.inf.ed.ac.uk/rni/papers/realprg.html) do. That way, we can also see how bitwise operations work.
 
-We start with a simple struct, amptly named BitArray:
+We start with a simple struct, aptly named BitArray:
 
 ```rust
 #[derive(Debug)]
@@ -211,7 +211,7 @@ Coming from a Scala background, I prefer concrete types in situations like this 
 ```rust
 #[derive(Copy, Clone)]
 struct Lookup {
-    byte_index: usize,
+    word_index: usize,
     bit_offset: u8,
 }
 ```
@@ -228,7 +228,7 @@ impl BitArray {
         }
 
         Some(Lookup {
-            byte_index: index / 64,
+            word_index: index / 64,
             bit_offset: (index % 64) as u8,
         })
     }
@@ -243,7 +243,7 @@ Before starting this project, I skimmed through several Rust data structure impl
 2. When accessing data via indexing (with `[]`), violations such as out of bounds access or missing keys result in a panic.
 3. For data structures where replacing an existing value is meaningful (like maps) successful insertions typically return the previous value, if any.
    
-As such, our API is also designed to follow these guidelines.
+As such, we are going to design our public-facing array API with these principles in mind.
 
 And now let us implement get and set methods:
 
@@ -253,7 +253,7 @@ impl BitArray {
     pub fn set(&mut self, index: usize) -> Option<bool> {
         let lookup = self.peek(index)?;
         let mask = 1u64 << lookup.bit_offset;
-        let byte = &mut self.bits[lookup.byte_index];
+        let byte = &mut self.bits[lookup.word_index];
 
         let previous = (*byte & mask) != 0;
         *byte |= mask;
@@ -263,7 +263,7 @@ impl BitArray {
 
     pub fn get(&self, index: usize) -> Option<bool> {
         let lookup = self.peek(index)?;
-        Some((self.bits[lookup.byte_index] & 
+        Some((self.bits[lookup.word_index] & 
         (1u64 << lookup.bit_offset)) != 0)
     }
 }
@@ -272,3 +272,6 @@ impl BitArray {
 Now, there is a lot to unpack here. To do that, we need to understand a simple Computer Science trick, called _masking_:
 
 ## Masking
+Now, let us go back to one of our earliest examples. We wanted to have a bit array of size 70, so we allocated two `u64` words to get there. But these are just integers, right? And we are dividing them to find bits? Most of us (including the author, yours truly) code in either Java or Python, and come up with web slop that somehow makes millions. We seldom hear about bits, and the last time we probably heard of words was during college, failing a Computer Architecture class.
+
+As a result, most of what we did up until now can be seen as a house of cards.
