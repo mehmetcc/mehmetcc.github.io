@@ -74,7 +74,9 @@ const metaDescription = description || config.site.description;
   </head>
   <body>
     <div class="container">
-      <Categories />
+      <div class="desktop-only">
+        <Categories />
+      </div>
       <Header />
       <main>
         <slot />
@@ -181,6 +183,14 @@ const metaDescription = description || config.site.description;
       ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
   }
 
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+
   @media (max-width: 768px) {
     .container {
       padding: 0 1rem;
@@ -192,6 +202,14 @@ const metaDescription = description || config.site.description;
 
     h3 {
       font-size: 1.25rem;
+    }
+
+    .mobile-only {
+      display: block;
+    }
+
+    .desktop-only {
+      display: none;
     }
   }
 </style>

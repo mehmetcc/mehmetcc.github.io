@@ -1,10 +1,14 @@
 ---
 import { config } from '../config';
+import MobileCategories from './MobileCategories.astro';
 
 const { copyright } = config.footer;
 ---
 
 <footer>
+  <div class="mobile-only">
+    <MobileCategories />
+  </div>
   <p>{copyright}</p>
 </footer>
 

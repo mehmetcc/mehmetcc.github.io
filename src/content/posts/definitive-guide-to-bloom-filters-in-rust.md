@@ -4,33 +4,33 @@ description: "An in-depth exploration of key concepts behind Bloom Filters, with
 pubDate: 2025-12-27
 tags: ["Rust", "Data Structures", "Bloom Filter"]
 ---
-I read a Reddit post a while ago with a meme attached, making fun of people who had just learned about Arenas and Bloom Filters and tried to apply their new-found knowledge to everything. For what it's worth, if you have recently acquired a hammer, everything is a nail.
+I read a Reddit post a while ago with a meme attached, making fun of people who had just learned about arenas and bloom filter and tried to apply their new-found knowledge to everything. For what it's worth, if you have recently acquired a hammer, everything is a nail.
 
-I know every programming language community has its own idea of what Arenas are, so it’s pointless to think of it as a single thing, but rather a concept of being totally zen. And maybe the real Arenas were the friends we made along the way.
+I know every programming language community has its own idea of what arenas are, so it’s pointless to think of it as a single thing, but rather a concept of being totally zen. And maybe the real arenas were the friends we made along the way.
 
 But Bloom Filters are different. They have been an integral part of the Computer Science ethos long before I was born and have been applied to many problems that are worth solving. I used them in a plethora of languages, implemented them over and over again. So I was confident enough in my practical skills to implement one. Only after running `cargo new bloom_filter`, I realized I did not know what I was supposed to do without copy-pasting a bunch of formulas I didn’t understand onto my screen.
 
-As such, we are going to demystify Bloom Filters in this post, focusing on _why_ they work, not just _how_ to implement them. I am not going to bore you by plagiarising the entire [Wikipedia article](https://en.wikipedia.org/wiki/Bloom_filter) but rather we will focus on explaining the theoretical aspects of the subject practically. We will also come up with a Rust implementation, because all the cool kids started coding with it recently.
+As such, we are going to demystify bloom filters in this post, focusing on _why_ they work, not just _how_ to implement them. I am not going to bore you by plagiarising the entire [Wikipedia article](https://en.wikipedia.org/wiki/Bloom_filter) but rather we will focus on explaining the theoretical aspects of the subject practically. We will also come up with a Rust implementation, because all the cool kids started coding with it recently.
 
 ## What is a Bloom Filter?
 I am terrible with names. But I am really good with faces. I often spend time with someone and become good friends, only to learn their name weeks later. That being said, time flies and faces change; and every once in a while I encounter someone who I don't recognize at all. But I can easily tell when I have never seen someone’s face before.
 
-A Bloom Filter works in a similar way. At its core, it answers a very specific question:
+A bloom filter works in a similar way. At its core, it answers a very specific question:
 
 > Have I definitely not seen this face before?
 
-Notice the phrasing. Like me, a Bloom Filter can confidently say if it has _never seen_ a face before.
+Notice the phrasing. Like me, a bloom filter can confidently say if it has _never seen_ a face before.
 
 - If it says no, you can trust it completely. That face is new. 
 - If it says yes, that's a maybe. It is hedging its bets. We’ve all had those embarrassing moments when we approach someone we think we know, only to realize it’s someone else.
 
-There are countless ways to illustrate Bloom Filters: you could compare them to the guest list of a Berlin Techno Club, or to the past and future roster of Fenerbahçe SK. But instead of spinning more analogies, let’s see what they really are under the hood.
+There are countless ways to illustrate bloom filters: you could compare them to the guest list of a Berlin Techno Club, or to the past and future roster of Fenerbahçe SK. But instead of spinning more analogies, let’s see what they really are under the hood.
 
-Formally, a Bloom Filter is a fixed-size array of bits. To insert an item, we run **k** different hash functions to map it to positions in the array and flip the corresponding bits to 1. Later, when we want to check if an item is already in the filter, we run the same **k** hash functions and look at those positions. If any of the bits are 0, we can confidently say the item is definitely new. If all the bits are 1, the item might already be in the filter; there’s a small chance of a false positive.
+Formally, a bloom filter is a fixed-size array of bits. To insert an item, we run **k** different hash functions to map it to positions in the array and flip the corresponding bits to 1. Later, when we want to check if an item is already in the filter, we run the same **k** hash functions and look at those positions. If any of the bits are 0, we can confidently say the item is definitely new. If all the bits are 1, the item might already be in the filter; there’s a small chance of a false positive.
 
 Here's some Javascript to better visualize the concepts:
 
-<!-- JS-based script to render a Bloom Filter visualization -->
+<!-- JS-based script to render a bloom filter visualization -->
 <div style="font-family:sans-serif; max-width:600px; margin:20px auto; padding:20px; border:1px solid #ddd; border-radius:12px; background:linear-gradient(to bottom, #f8f9fc, #ffffff); box-shadow:0 4px 12px rgba(0,0,0,0.1);">
   <h3 style="margin-bottom:15px; text-align:center; color:#333; font-size:1.5em;">Bloom Filter Visualizer</h3>
   
@@ -141,15 +141,15 @@ document.getElementById('bfInput').addEventListener('blur', () => {
 </script>
 <!-- Script ends.. -->
 
-Bloom Filters are fixed-size. We also have to specify two different constants: **n** and **m**.
+Bloom filters are fixed-size. We also have to specify two different constants: **n** and **m**.
 
 - **n** is the number of items we anticipate being inserted. 
 - **m** is the size of the bit array. The bigger the *m* is, the fewer false positives we will get.
 
-Choosing these constants carefully is crucial for an optimal Bloom Filter. Too many hash functions can slow down execution, since each hash function call is computationally costly. Meanwhile, a very large bit array can increase memory usage. Luckily, there’s a way to mathematically choose the optimal values. We'll cover this during the implementation phase.
+Choosing these constants carefully is crucial for an optimal bloom filter. Too many hash functions can slow down execution, since each hash function call is computationally costly. Meanwhile, a very large bit array can increase memory usage. Luckily, there’s a way to mathematically choose the optimal values. We'll cover this during the implementation phase.
 
 ## Bit Arrays
-To have a functioning Bloom Filter, we need a bit array and a hash function implementation. Luckily, both are available within Rust ecosystem.
+To have a functioning bloom filter, we need a bit array and a hash function implementation. Luckily, both are available within Rust ecosystem.
 
 However, since the point of this exercise is to learn, we’ll implement our own bit array as well, like [real programmers](https://homepages.inf.ed.ac.uk/rni/papers/realprg.html) do. That way, we can also see how bitwise operations work.
 
@@ -523,7 +523,37 @@ impl BitArray {
 }
 ```
 
-This method helps us count the bits that are set to 1 and will be useful for our Bloom Filter implementation. And voilà! We have a working bit array implementation in place.
+This method helps us count the bits that are set to 1 and will be useful for our bloom filter implementation. And voilà! We have a working bit array implementation in place.
 
 ## Hashes
+Before we get into this, I should mention that we are **NOT** going to implement hash functions from scratch. I've done that before, they are very hard to reason about and not particularly fun to implement from scratch. Instead, we will rely on what Rust's standard library kindly provides for us.
 
+As a rule of thumb, we want our hash functions to be as uniformly distributed as possible. In practice, this means that every bit in the array should be equally likely to be flipped. If certain regions of the bit array are favored over others, those bits will fill up quickly, and the Bloom Filter will start returning _maybe_ far more often than it should. The hash function should also be fast, since we’re going to run it many times.
+
+We’ve already mentioned that we need **k** different hash functions for a Bloom Filter to work. At first glance, having **k** separate hash functions might seem inefficient. But since we’re smart (!) computer scientists, we have a few tricks up our sleeves. To be precise, we have 2:
+
+### 1. (In lack of a better term) Seeded Hashing
+This is straightforward. Let’s imagine the following function:
+
+```rust
+use std::hash::{DefaultHasher, Hash, Hasher};
+...
+pub fn generate<T: Hash>(item: &T, seed: u64) -> u64 {
+    let mut hasher = DefaultHasher::new();
+    seed.hash(&mut hasher);
+    item.hash(&mut hasher);
+    hasher.finish()
+    }
+```
+
+Feeding different seeds into this function **k** times:
+
+```rust
+(0..k).map(|i| generate(item, i))
+```
+
+produces **k** different hash values while requiring only a single hash function. That saves the day, right? **Right**?
+
+Even though this saves us from the burden of maintaining **k** different functions, we still have to call a hash function **k** times. As we explained earlier, all of these calls cost too much. Luckily, we can do better:
+
+### 2. Double Hashing
