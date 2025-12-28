@@ -179,11 +179,17 @@ const pubDateISO = post.data.pubDate.toISOString();
     color: #999;
   }
 
+  .post-content :global(a) {
+    text-decoration: underline;
+    text-decoration-color: var(--color-gray-dark);
+    color: var(--color-black);
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
 
-
-
-
-
+  .post-content :global(a:hover) {
+    color: var(--color-gray-dark);
+    text-decoration-color: var(--color-black);
+  }
 
   .post-content :global(p) {
     margin-bottom: 1.5rem;
