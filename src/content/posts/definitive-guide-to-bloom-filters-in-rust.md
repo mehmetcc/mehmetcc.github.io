@@ -863,7 +863,7 @@ pub fn theoretical_false_positive_rate(&self) -> f64 {
 }
 ```
 
-Emphasize on _theoretical_. It assumes our hash functions are perfectly uniform, whereas the hash implementation we are using [SipHash](https://en.wikipedia.org/wiki/SipHash) that generates pseudo-random values and can be non-uniform. Nevertheless, this approximation is useful for understanding how well the Bloom filter is performing and diagnosing potential deviations from the expected false positive rate.
+Emphasize on _theoretical_. It assumes our hash functions are perfectly uniform, whereas the hash implementation we are using ([SipHash](https://en.wikipedia.org/wiki/SipHash)) generates pseudo-random values and can be non-uniform. Nevertheless, this approximation is useful for understanding how well the Bloom filter is performing and diagnosing potential deviations from the expected false positive rate.
 
 We can also determine how full the filter is based on the number of set bits, by using Maximum Likelihood Estimation:
 
