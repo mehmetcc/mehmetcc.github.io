@@ -93,21 +93,23 @@ const pubDateISO = post.data.pubDate.toISOString();
         >
       </div>
     </nav>
-    <script
-      src="https://giscus.app/client.js"
-      data-repo="mehmetcc/giscus-discussions"
-      data-repo-id="R_kgDOQvQpJA"
-      data-category="Announcements"
-      data-category-id="DIC_kwDOQvQpJM4C0Qut"
-      data-mapping="pathname"
-      data-strict="0"
-      data-reactions-enabled="1"
-      data-emit-metadata="0"
-      data-input-position="bottom"
-      data-theme="light"
-      data-lang="en"
-      crossorigin="anonymous"
-      async></script>
+    <div class="comments-section">
+      <script
+        src="https://giscus.app/client.js"
+        data-repo="mehmetcc/giscus-discussions"
+        data-repo-id="R_kgDOQvQpJA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOQvQpJM4C0Qut"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="light"
+        data-lang="en"
+        crossorigin="anonymous"
+        async></script>
+    </div>
   </article>
 </Layout>
 
@@ -223,5 +225,9 @@ const pubDateISO = post.data.pubDate.toISOString();
 
   .return-back-link:hover::after {
     width: 100%;
+  }
+
+  .comments-section {
+    margin-top: 4rem;
   }
 </style>
