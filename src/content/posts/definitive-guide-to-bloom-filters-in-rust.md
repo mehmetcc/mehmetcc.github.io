@@ -31,7 +31,7 @@ Formally, a bloom filter is a fixed-size array of bits. To insert an item, we ru
 Here's some Javascript to better visualize the concepts:
 
 <!-- JS-based script to render a bloom filter visualization -->
-<div style="font-family:sans-serif; max-width:600px; margin:20px auto; padding:20px; border:1px solid #ddd; border-radius:12px; background:linear-gradient(to bottom, #f8f9fc, #ffffff); box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+<div style="font-family:sans-serif; max-width:600px; margin:20px auto; padding:20px; border:1px solid #ddd; border-radius:12px; background:linear-gradient(to bottom, #f8f9fc, #ffffff); box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow-x: auto;">
   <h3 style="margin-bottom:15px; text-align:center; color:#333; font-size:1.5em;">Bloom Filter Visualizer</h3>
   
   <div style="display:flex; gap:8px; margin-bottom:15px;">
