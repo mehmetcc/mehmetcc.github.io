@@ -169,7 +169,8 @@ const metaDescription = description || config.site.description;
     margin-bottom: 1.25rem;
   }
 
-  ul, ol {
+  ul,
+  ol {
     padding-left: 2rem;
     margin-bottom: 1.25rem; /* Keep consistent with p tags */
   }
@@ -191,8 +192,20 @@ const metaDescription = description || config.site.description;
   }
 
   code {
+    counter-reset: step;
+    counter-increment: step 0;
     font-family:
       ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
+  }
+
+  code .line::before {
+    content: counter(step);
+    counter-increment: step;
+    width: 1rem;
+    margin-right: 1.5rem;
+    display: inline-block;
+    text-align: right;
+    color: rgba(115, 138, 148, 0.4);
   }
 
   blockquote {
