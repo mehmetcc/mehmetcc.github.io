@@ -2,7 +2,7 @@
 title: "The Definitive Guide to Bloom Filters (in Rust)"
 description: "An in-depth exploration of key concepts behind Bloom Filters, with a complete implementation in Rust."
 pubDate: 2025-12-27
-tags: ["Rust", "Data Structures", "Bloom Filter"]
+tags: ["Rust", "Data Structures", "Bloom Filters"]
 ---
 I read a Reddit post a while ago with a meme attached, making fun of people who had just learned about arenas and bloom filter and tried to apply their new-found knowledge to everything. For what it's worth, if you have recently acquired a hammer, everything is a nail.
 
