@@ -864,11 +864,13 @@ pub fn theoretical_false_positive_rate(&self) -> f64 {
 
 We can also determine how full the filter is based on the number of set bits, by using Maximum Likelihood Estimation:
 
-```rust
 $$
 n_{\text{actual}} = -\frac{m}{k} \ln\left(1 - \frac{s}{m}\right)
 $$
 
+In Rust:
+
+```rust
 pub fn capacity_utilization(&self) -> f64 {
     let m = self.config.m as f64;
     let k = self.config.k as f64;
