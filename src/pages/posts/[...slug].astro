@@ -36,16 +36,18 @@ const pubDateISO = post.data.pubDate.toISOString();
           })
         }
       </time>
-      {post.data.tags && post.data.tags.length > 0 && (
-        <div class="post-tags">
-          {post.data.tags.map((tag, index) => (
-            <>
-              <a href={`/categories/${tag}`}>{tag}</a>
-              {index < post.data.tags.length - 1 && ' · '}
-            </>
-          ))}
-        </div>
-      )}
+      {
+        post.data.tags && post.data.tags.length > 0 && (
+          <div class="post-tags">
+            {post.data.tags.map((tag, index) => (
+              <>
+                <a href={`/categories/${tag}`}>{tag}</a>
+                {index < post.data.tags.length - 1 && " · "}
+              </>
+            ))}
+          </div>
+        )
+      }
     </header>
 
     <div class="post-content">
@@ -91,21 +93,21 @@ const pubDateISO = post.data.pubDate.toISOString();
         >
       </div>
     </nav>
-    <script src="https://giscus.app/client.js"
-        data-repo="mehmetcc/giscus-discussions"
-        data-repo-id="R_kgDOQvQpJA"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOQvQpJM4C0Qut"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="light"
-        data-lang="en"
-        crossorigin="anonymous"
-        async>
-</script>
+    <script
+      src="https://giscus.app/client.js"
+      data-repo="mehmetcc/giscus-discussions"
+      data-repo-id="R_kgDOQvQpJA"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOQvQpJM4C0Qut"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="light"
+      data-lang="en"
+      crossorigin="anonymous"
+      async></script>
   </article>
 </Layout>
 
@@ -168,85 +170,16 @@ const pubDateISO = post.data.pubDate.toISOString();
   .post-tags a {
     color: #999;
     text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .post-tags a:hover {
-    color: var(--color-black);
-  }
-
-  .post-tags span.separator {
-    color: #999;
   }
 
   .post-content :global(a) {
     text-decoration: underline;
-    text-decoration-color: var(--color-gray-dark);
-    color: var(--color-black);
-    transition: color 0.2s ease, text-decoration-color 0.2s ease;
-  }
-
-  .post-content :global(a:hover) {
-    color: var(--color-gray-dark);
-    text-decoration-color: var(--color-black);
-  }
-
-  .post-content :global(p) {
-    margin-bottom: 1.5rem;
-  }
-
-  .post-content :global(h2) {
-    margin-top: 3rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .post-content :global(h3) {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .post-content :global(ul),
-  .post-content :global(ol) {
-    margin-bottom: 1.5rem;
-    padding-left: 2rem;
-  }
-
-  .post-content :global(li) {
-    margin-bottom: 0.5rem;
-  }
-
-  .post-content :global(blockquote) {
-    border-left: 3px solid var(--color-gray-medium);
-    padding-left: 1.5rem;
-    margin: 2rem 0;
-    color: var(--color-gray-dark);
-    font-style: italic;
-  }
-
-  .post-content :global(code) {
-    background-color: var(--color-gray-light);
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
-    font-size: 0.9em;
-  }
-
-  .post-content :global(pre) {
-    background-color: var(--color-gray-light);
-    padding: 1.5rem;
-    border-radius: 3px;
-    overflow-x: auto;
-    margin: 2rem 0;
-  }
-
-  .post-content :global(pre code) {
-    background-color: transparent;
-    padding: 0;
   }
 
   .post-footer-nav {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     margin-top: 4rem;
     padding-top: 2rem;
     border-top: 1px solid var(--color-gray-medium);
@@ -260,35 +193,32 @@ const pubDateISO = post.data.pubDate.toISOString();
   .share-btn svg {
     width: 24px;
     height: 24px;
+    display: block;
     fill: currentColor;
     color: black;
-    transition: color 0.2s ease;
-  }
-
-  .share-btn:hover svg {
-    color: #555;
   }
 
   .footer-right {
+    align-items: center;
   }
 
   .return-back-link {
-    display: inline-block;
     position: relative;
     color: var(--color-black);
     text-decoration: none;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    /* padding-bottom: 0.1rem; */
   }
 
   .return-back-link::after {
     content: "";
     position: absolute;
-    bottom: -2px;
+    bottom: 0;
     left: 0;
     width: 0;
     height: 1px;
     background-color: var(--color-black);
-    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.2s ease;
   }
 
   .return-back-link:hover::after {
