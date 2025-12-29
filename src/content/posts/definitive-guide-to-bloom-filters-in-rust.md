@@ -840,16 +840,17 @@ impl BloomFilter {
     }
     ...
 }
-
 ```
 
-We can also calculate theoretical false positive rate, assuming n items were inserted:
+We can now use this function to derive the values for m and k. All we have to do is specify how many elements (**n**) we plan to insert and the maximum false positive rate (**p**) that the system can tolerate.
+
+There is another formula to calculate theoretical false positive rate, assuming **n** items were inserted:
 
 $$
 \text{p} = \left(1 - e^{-\frac{kn}{m}}\right)^k
 $$
 
-which in Rust translates to:
+which translates to Rust as:
 
 ```rust
 pub fn theoretical_false_positive_rate(&self) -> f64 {
@@ -861,6 +862,8 @@ pub fn theoretical_false_positive_rate(&self) -> f64 {
     (1.0 - exponent.exp()).powf(k)
 }
 ```
+
+Emphasize on _theoretical_. It assumes our hash functions are perfectly uniform, whereas the hash implementation we are using [SipHash](https://en.wikipedia.org/wiki/SipHash) that generates pseudo-random values and can be non-uniform. Nevertheless, this approximation is useful for understanding how well the Bloom filter is performing and diagnosing potential deviations from the expected false positive rate.
 
 We can also determine how full the filter is based on the number of set bits, by using Maximum Likelihood Estimation:
 
