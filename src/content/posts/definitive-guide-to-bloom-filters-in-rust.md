@@ -526,7 +526,7 @@ impl BitArray {
 This method helps us count the bits that are set to 1 and will be useful for our bloom filter implementation. And voilà! We have a working bit array implementation in place.
 
 ## Hashes
-Before we get into this, I should mention that we are **NOT** going to implement hash functions from scratch. I've done that before, they are very hard to reason about and not particularly fun to implement from scratch. Instead, we will rely on what Rust's standard library kindly provides for us.
+Before we get into this, I should mention that we are **NOT** going to implement hash functions. I've done that before, they are very hard to reason about and not particularly fun to implement from scratch. Instead, we will rely on what Rust's standard library kindly provides for us.
 
 As a rule of thumb, we want our hash functions to be as uniformly distributed as possible. In practice, this means that every bit in the array should be equally likely to be flipped. If certain regions of the bit array are favored over others, those bits will fill up quickly, and the Bloom Filter will start returning _maybe_ far more often than it should. The hash function should also be fast, since we’re going to run it many times.
 
