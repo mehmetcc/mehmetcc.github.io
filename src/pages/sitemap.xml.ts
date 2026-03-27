@@ -11,13 +11,31 @@ export const GET: APIRoute = async () => {
   const postsPerPage = config.pagination.postsPerPage;
   const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
 
+  // Collect all unique tags
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags || []))];
+
   // Generate URLs for all pages
   const urls: string[] = [config.site.url + "/"];
 
-  // Add pagination pages
+  // Add pagination pages for the index
   for (let i = 2; i <= totalPages; i++) {
     urls.push(`${config.site.url}/${i}`);
   }
+
+  // Add category index page
+  urls.push(`${config.site.url}/categories`);
+
+  // Add individual tag pages
+  tags.forEach((tag) => {
+    urls.push(`${config.site.url}/categories/${tag}`);
+    
+    // Check if tag pages need pagination (optional but recommended for a complete sitemap)
+    const tagPosts = posts.filter((post) => post.data.tags?.includes(tag));
+    const tagPages = Math.ceil(tagPosts.length / postsPerPage);
+    for (let i = 2; i <= tagPages; i++) {
+        urls.push(`${config.site.url}/categories/${tag}/${i}`);
+    }
+  });
 
   // Add post URLs
   sortedPosts.forEach((post) => {
