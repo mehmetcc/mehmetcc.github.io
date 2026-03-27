@@ -26,3 +26,7 @@ For some reason `npm run dev` runs too slow, because it tries to load all the lo
 [x] Create an RSS feed.
 
 [x] Show tags and the RSS feed link at the right-hand side of the project.
+
+[] Make code blocks better: Add a copy button
+
+[] Make code blocks better: Add line numbers

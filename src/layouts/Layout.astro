@@ -191,6 +191,36 @@ const metaDescription = description || config.site.description;
     margin-bottom: 1.5rem;
   }
 
+  .code-wrapper {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .code-wrapper pre {
+    margin-bottom: 0;
+  }
+
+  .copy-code {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: var(--color-gray-dark);
+    background-color: var(--color-gray-light);
+    border: 1px solid var(--color-gray-medium);
+    border-radius: 0 6px 0 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .code-wrapper:hover .copy-code {
+    opacity: 1;
+  }
+
   code {
     counter-reset: step;
     counter-increment: step 0;
@@ -246,3 +276,55 @@ const metaDescription = description || config.site.description;
     }
   }
 </style>
+
+<script>
+  function addCopyButtons() {
+    const copyButtonLabel = "Copy";
+    const codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    for (let codeBlock of codeBlocks) {
+      // Avoid double-wrapping
+      if (codeBlock.parentElement?.classList.contains("code-wrapper")) continue;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-wrapper";
+
+      const copyButton = document.createElement("button");
+      copyButton.className = "copy-code";
+      copyButton.innerHTML = copyButtonLabel;
+      copyButton.setAttribute("aria-label", "Copy code to clipboard");
+
+      codeBlock.parentNode?.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+      wrapper.appendChild(copyButton);
+
+      copyButton.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+
+    async function copyCode(block: HTMLElement, button: HTMLButtonElement) {
+      const code = block.querySelector("code");
+      if (!code) return;
+
+      const text = code.innerText;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        button.innerText = "Copied!";
+        setTimeout(() => {
+          button.innerText = copyButtonLabel;
+        }, 2000);
+      } catch (err) {
+        console.error("Failed to copy: ", err);
+        button.innerText = "Error";
+      }
+    }
+  }
+
+  // Run on initial load
+  addCopyButtons();
+
+  // Run on view transitions if enabled
+  document.addEventListener("astro:after-swap", addCopyButtons);
+</script>
