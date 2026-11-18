@@ -1,0 +1,176 @@
+<div
+  style="font-family:sans-serif; width:100%; margin:1.5rem 0; padding:1.25rem 1.5rem; border:1px solid var(--color-gray-medium, #dee2e6); border-radius:6px; background:#ffffff; overflow-x: auto;"
+>
+  <h3 style="margin-bottom:15px; text-align:center; color:#333; font-size:1.5em;">
+    Bloom Filter Visualizer
+  </h3>
+
+  <div style="display:flex; gap:8px; margin-bottom:15px;">
+    <input
+      id="bfInput"
+      placeholder="Enter a value..."
+      style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:1em; outline:none; transition:border-color 0.2s;"
+    />
+    <button
+      id="bfAddBtn"
+      type="button"
+      style="padding:10px 15px; background:#4CAF50; color:white; border:none; border-radius:6px; cursor:pointer; transition:background 0.2s;"
+    >
+      Add
+    </button>
+    <button
+      id="bfQueryBtn"
+      type="button"
+      style="padding:10px 15px; background:#2196F3; color:white; border:none; border-radius:6px; cursor:pointer; transition:background 0.2s;"
+    >
+      Query
+    </button>
+    <button
+      id="bfResetBtn"
+      type="button"
+      style="padding:10px 15px; background:#f44336; color:white; border:none; border-radius:6px; cursor:pointer; transition:background 0.2s;"
+    >
+      Reset
+    </button>
+  </div>
+
+  <div
+    id="bitContainer"
+    style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:15px; padding:10px; background:#f0f4f8; border-radius:8px;"
+  >
+  </div>
+
+  <div style="font-size:0.95em; margin-bottom:10px; text-align:center; color:#555;">
+    <span id="hash1Display">Hash1: -</span> |
+    <span id="hash2Display">Hash2: -</span>
+  </div>
+
+  <div
+    id="bfMessage"
+    style="font-size:0.95em; margin-top:10px; min-height:1.2em; text-align:center; color:#333; font-weight:500;"
+  >
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const SIZE = 12;
+    let bits = Array(SIZE).fill(0);
+
+    function h1(s) {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) {
+        h = (h << 5) - h + s.charCodeAt(i);
+        h = h & h;
+      }
+      return Math.abs(h) % SIZE;
+    }
+
+    function h2(s) {
+      let h = 5381;
+      for (let i = 0; i < s.length; i++) {
+        h = (h << 5) + h + s.charCodeAt(i);
+      }
+      return Math.abs(h) % SIZE;
+    }
+
+    function renderBits(highlight = []) {
+      const container = document.getElementById("bitContainer");
+      if (!container) return;
+      container.innerHTML = "";
+      bits.forEach((b, i) => {
+        const div = document.createElement("div");
+        div.style.width = div.style.height = "32px";
+        div.style.borderRadius = "50%";
+        div.style.background = b
+          ? "linear-gradient(135deg, #667eea, #764ba2)"
+          : "#e0e0e0";
+        div.style.color = b ? "#fff" : "#666";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.justifyContent = "center";
+        div.style.fontSize = "0.9em";
+        div.style.fontWeight = "bold";
+        div.style.transition = "background 0.3s, transform 0.2s";
+        div.textContent = b ? "1" : "0";
+        if (highlight.includes(i)) {
+          div.style.outline = "2px solid #f5576c";
+          div.style.transform = "scale(1.1)";
+        }
+        container.appendChild(div);
+      });
+    }
+
+    function showMessage(msg, color = "#333") {
+      const msgElem = document.getElementById("bfMessage");
+      if (!msgElem) return;
+      msgElem.textContent = msg;
+      msgElem.style.color = color;
+      msgElem.style.transition = "opacity 0.3s";
+      msgElem.style.opacity = "0";
+      setTimeout(() => (msgElem.style.opacity = "1"), 10);
+    }
+
+    function addBF() {
+      const input = document.getElementById("bfInput");
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) {
+        showMessage("Please enter a value", "#f44336");
+        return;
+      }
+      const i1 = h1(val),
+        i2 = h2(val);
+      bits[i1] = 1;
+      bits[i2] = 1;
+      document.getElementById("hash1Display").textContent = "Hash1: " + i1;
+      document.getElementById("hash2Display").textContent = "Hash2: " + i2;
+      renderBits([i1, i2]);
+      showMessage(`Added "${val}" (bits ${i1} & ${i2})`, "#4CAF50");
+      input.value = "";
+    }
+
+    function queryBF() {
+      const input = document.getElementById("bfInput");
+      if (!input) return;
+      const val = input.value.trim();
+      if (!val) {
+        showMessage("Please enter a value", "#f44336");
+        return;
+      }
+      const i1 = h1(val),
+        i2 = h2(val);
+      document.getElementById("hash1Display").textContent = "Hash1: " + i1;
+      document.getElementById("hash2Display").textContent = "Hash2: " + i2;
+      renderBits([i1, i2]);
+      if (bits[i1] && bits[i2]) {
+        showMessage(`"${val}" might be in the set`, "#2196F3");
+      } else {
+        showMessage(`"${val}" is definitely NOT in the set`, "#f44336");
+      }
+      input.value = "";
+    }
+
+    function resetBF() {
+      bits.fill(0);
+      renderBits();
+      showMessage("Bloom Filter reset", "#888");
+      document.getElementById("hash1Display").textContent = "Hash1: -";
+      document.getElementById("hash2Display").textContent = "Hash2: -";
+    }
+
+    renderBits();
+
+    document.getElementById("bfAddBtn")?.addEventListener("click", addBF);
+    document.getElementById("bfQueryBtn")?.addEventListener("click", queryBF);
+    document.getElementById("bfResetBtn")?.addEventListener("click", resetBF);
+
+    const bfInput = document.getElementById("bfInput");
+    bfInput?.addEventListener("focus", () => {
+      bfInput.style.borderColor = "#667eea";
+    });
+    bfInput?.addEventListener("blur", () => {
+      bfInput.style.borderColor = "#ccc";
+    });
+  })();
+</script>

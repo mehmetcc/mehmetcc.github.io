@@ -4,6 +4,10 @@ description: "An in-depth exploration of key concepts behind Bloom Filters, with
 pubDate: 2025-12-27
 tags: ["Rust", "Data Structures", "Bloom Filters"]
 ---
+import InfoBox from "../../components/InfoBox.astro";
+import InfoRows from "../../components/InfoRows.astro";
+import BloomFilterDemo from "../../components/BloomFilterDemo.astro";
+
 I read a Reddit post a while ago with a meme attached, making fun of people who had just learned about arenas and bloom filter and tried to apply their new-found knowledge to everything. For what it's worth, if you have recently acquired a hammer, everything is a nail.
 
 I know every programming language community has its own idea of what arenas are, so it’s pointless to think of it as a single thing, but rather a concept of being totally zen. And maybe the real arenas were the friends we made along the way.
@@ -30,116 +34,7 @@ Formally, a bloom filter is a fixed-size array of bits. To insert an item, we ru
 
 Here's some Javascript to better visualize the concepts:
 
-<!-- JS-based script to render a bloom filter visualization -->
-<div style="font-family:sans-serif; max-width:600px; margin:20px auto; padding:20px; border:1px solid #ddd; border-radius:12px; background:linear-gradient(to bottom, #f8f9fc, #ffffff); box-shadow:0 4px 12px rgba(0,0,0,0.1); overflow-x: auto;">
-  <h3 style="margin-bottom:15px; text-align:center; color:#333; font-size:1.5em;">Bloom Filter Visualizer</h3>
-  
-  <div style="display:flex; gap:8px; margin-bottom:15px;">
-    <input id="bfInput" placeholder="Enter a value..." style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:1em; outline:none; transition:border-color 0.2s;">
-    <button onclick="addBF()" style="padding:10px 15px; background:#4CAF50; color:white; border:none; border-radius:6px; cursor:pointer; transition:background 0.2s;">Add</button>
-    <button onclick="queryBF()" style="padding:10px 15px; background:#2196F3; color:white; border:none; border-radius:6px; cursor:pointer; transition:background 0.2s;">Query</button>
-    <button onclick="resetBF()" style="padding:10px 15px; background:#f44336; color:white; border:none; border-radius:6px; cursor:pointer; transition:background 0.2s;">Reset</button>
-  </div>
-  
-  <div id="bitContainer" style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:15px; padding:10px; background:#f0f4f8; border-radius:8px;"></div>
-  
-  <div style="font-size:0.95em; margin-bottom:10px; text-align:center; color:#555;">
-    <span id="hash1Display">Hash1: -</span> | 
-    <span id="hash2Display">Hash2: -</span>
-  </div>
-  
-  <div id="bfMessage" style="font-size:0.95em; margin-top:10px; min-height:1.2em; text-align:center; color:#333; font-weight:500;"></div>
-</div>
-
-<script>
-const SIZE = 12;
-let bits = Array(SIZE).fill(0);
-
-function h1(s){let h=0; for(let i=0;i<s.length;i++){h=(h<<5)-h+s.charCodeAt(i); h=h&h;} return Math.abs(h)%SIZE;}
-function h2(s){let h=5381; for(let i=0;i<s.length;i++){h=(h<<5)+h+s.charCodeAt(i);} return Math.abs(h)%SIZE;}
-
-function renderBits(highlight=[]){
-  const container = document.getElementById('bitContainer');
-  container.innerHTML='';
-  bits.forEach((b,i)=>{
-    const div=document.createElement('div');
-    div.style.width=div.style.height='32px';
-    div.style.borderRadius='50%';
-    div.style.background=b ? 'linear-gradient(135deg, #667eea, #764ba2)' : '#e0e0e0';
-    div.style.color=b ? '#fff' : '#666';
-    div.style.display='flex';
-    div.style.alignItems='center';
-    div.style.justifyContent='center';
-    div.style.fontSize='0.9em';
-    div.style.fontWeight='bold';
-    div.style.transition='background 0.3s, transform 0.2s';
-    div.textContent=b ? 1 : 0;
-    if(highlight.includes(i)) {
-      div.style.outline='2px solid #f5576c';
-      div.style.transform='scale(1.1)';
-    }
-    container.appendChild(div);
-  });
-}
-
-function showMessage(msg, color='#333'){ 
-  const msgElem = document.getElementById('bfMessage');
-  msgElem.textContent=msg; 
-  msgElem.style.color=color;
-  msgElem.style.transition='opacity 0.3s';
-  msgElem.style.opacity=0;
-  setTimeout(() => msgElem.style.opacity=1, 10);
-}
-
-function addBF(){
-  const val=document.getElementById('bfInput').value.trim();
-  if(!val){ showMessage('Please enter a value', '#f44336'); return; }
-  const i1=h1(val), i2=h2(val);
-  bits[i1]=1; bits[i2]=1;
-  document.getElementById('hash1Display').textContent='Hash1: '+i1;
-  document.getElementById('hash2Display').textContent='Hash2: '+i2;
-  renderBits([i1,i2]);
-  showMessage(`Added "${val}" (bits ${i1} & ${i2})`, '#4CAF50');
-  document.getElementById('bfInput').value='';
-}
-
-function queryBF(){
-  const val=document.getElementById('bfInput').value.trim();
-  if(!val){ showMessage('Please enter a value', '#f44336'); return; }
-  const i1=h1(val), i2=h2(val);
-  document.getElementById('hash1Display').textContent='Hash1: '+i1;
-  document.getElementById('hash2Display').textContent='Hash2: '+i2;
-  renderBits([i1,i2]);
-  if(bits[i1] && bits[i2]) showMessage(`"${val}" might be in the set`, '#2196F3');
-  else showMessage(`"${val}" is definitely NOT in the set`, '#f44336');
-  document.getElementById('bfInput').value='';
-}
-
-function resetBF(){ 
-  bits.fill(0); 
-  renderBits(); 
-  showMessage('Bloom Filter reset', '#888'); 
-  document.getElementById('hash1Display').textContent='Hash1: -'; 
-  document.getElementById('hash2Display').textContent='Hash2: -'; 
-}
-
-renderBits();
-
-// Add hover effects to buttons
-document.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('mouseover', () => btn.style.opacity = 0.9);
-  btn.addEventListener('mouseout', () => btn.style.opacity = 1);
-});
-
-// Focus effect on input
-document.getElementById('bfInput').addEventListener('focus', () => {
-  document.getElementById('bfInput').style.borderColor = '#667eea';
-});
-document.getElementById('bfInput').addEventListener('blur', () => {
-  document.getElementById('bfInput').style.borderColor = '#ccc';
-});
-</script>
-<!-- Script ends.. -->
+<BloomFilterDemo />
 
 Bloom filters are fixed-size. We also have to specify two different constants: **n** and **m**.
 
@@ -155,7 +50,7 @@ However, since the point of this exercise is to learn, we’ll implement our own
 
 We start with a simple struct, aptly named BitArray:
 
-```rust
+```rust title="src/bit_array.rs"
 #[derive(Debug)]
 pub struct BitArray {
     bits: Vec<u64>,
@@ -165,7 +60,7 @@ pub struct BitArray {
 
 and a constructor:
 
-```rust
+```rust title="src/bit_array.rs"
 impl BitArray {
     pub fn new(size: usize) -> Self {
         let words = size.div_ceil(64);
@@ -187,7 +82,7 @@ Another design choice we made was to use 64-bit words. If you want to use 8-bit 
 
 Now let us implement get and set functionality for our bit array. As you can see, we store bits inside a word, so we first have to determine which word we are looking for. Afterwards, we look inside that word to find the specific bit we need. Since we do this for both get and set, we might as well write a helper method to reduce code duplication:
 
-```rust
+```rust title="src/bit_array.rs"
 impl BitArray {
   ...
     #[inline(always)]
@@ -208,7 +103,7 @@ We also perform an if-check to prevent possible overflows. Remember that our bit
 
 Coming from a Scala background, I prefer concrete types in situations like this rather than using tuple fields. This allows us to name things explicitly, and when we revisit the code a year later we can clearly understand what we were thinking at the time. So let us refactor the code slightly:
 
-```rust
+```rust title="src/bit_array.rs"
 #[derive(Copy, Clone)]
 struct Lookup {
     word_index: usize,
@@ -218,7 +113,7 @@ struct Lookup {
 
 and now we can return an optional Lookup value from our peek method:
 
-```rust
+```rust title="src/bit_array.rs"
 impl BitArray {
   ...
     #[inline(always)]
@@ -247,7 +142,7 @@ As such, we are going to design our public-facing array API with these principle
 
 Let us implement get and set methods:
 
-```rust
+```rust title="src/bit_array.rs"
 impl BitArray {
   ...
     pub fn set(&mut self, index: usize) -> Option<bool> {
@@ -278,148 +173,48 @@ As a result, most of what we did up until now can be seen as a house of cards. T
 
 Let us imagine we have an 8-bit value:
 
-<!-- This used to be all text, until I let Gemini-CLI proof-read my work -->
-<!-- Being a good Samaritan, it gifted me with these amazing visuals -->
-<!-- The code is unmaintainable mess, but I am not complaining about the way it looks -->
-<style>
-.bit-op-vis {
-    font-family: 'Fira Code', 'Courier New', Courier, monospace;
-    background-color: #282a36; /* Dracula background */
-    color: #f8f8f2; /* Dracula foreground */
-    padding: 1.5em;
-    border-radius: 8px;
-    margin: 2em 0;
-    font-size: 1.1em;
-    line-height: 1.8;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    overflow-x: auto;
-}
-.bit-op-vis .line {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75em;
-}
-.bit-op-vis .line:last-child {
-    margin-bottom: 0;
-}
-.bit-op-vis .label {
-    min-width: 120px;
-    color: #8be9fd; /* Dracula cyan */
-    text-align: right;
-    padding-right: 1em;
-}
-.bit-op-vis .bits {
-    display: flex;
-}
-.bit-op-vis .bit {
-    width: 2.2ch;
-    text-align: center;
-}
-.bit-op-vis .bit.highlight {
-    color: #ffb86c; /* Dracula orange */
-    font-weight: bold;
-    transform: scale(1.1);
-}
-.bit-op-vis .separator {
-    width: 2ch;
-    text-align: center;
-    color: #6272a4; /* Dracula comment */
-}
-.bit-op-vis .op-symbol {
-    min-width: 120px;
-    color: #ff79c6; /* Dracula pink */
-    font-weight: bold;
-    text-align: right;
-    padding-right: 1em;
-}
-.bit-op-vis hr {
-    border: none;
-    border-top: 1px solid #6272a4; /* Dracula comment */
-    margin: 1em 0;
-}
-.bit-op-vis .comment {
-    color: #6272a4; /* Dracula comment */
-    font-style: italic;
-    margin-left: 2em;
-}
-.bit-op-vis .index-line .bit {
-    color: #bd93f9; /* Dracula purple */
-    font-size: 0.9em;
-}
-</style>
-
-<div class="bit-op-vis">
-  <div class="line">
-    <span class="label">value =</span>
-    <div class="bits">
-      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span>
-      <span class="separator">_</span>
-      <span class="bit">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
-    </div>
-    <span class="comment">// 0b1010_1101</span>
-  </div>
-</div>
+<InfoBox mono>
+  <InfoRows
+    rows={[
+      { label: "value =", bits: "1010_1101", comment: "// 0b1010_1101" },
+    ]}
+  />
+</InfoBox>
 
 and we want to check bit 3 (counting from the right, starting at 0):
 
-<div class="bit-op-vis">
-  <div class="line index-line">
-    <span class="label">Bit index:</span>
-    <div class="bits">
-      <span class="bit">7</span><span class="bit">6</span><span class="bit">5</span><span class="bit">4</span>
-      <span class="separator"> </span>
-      <span class="bit">3</span><span class="bit">2</span><span class="bit">1</span><span class="bit">0</span>
-    </div>
-  </div>
-  <div class="line">
-    <span class="label">value:</span>
-    <div class="bits">
-      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span>
-      <span class="separator"> </span>
-      <span class="bit highlight">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
-    </div>
-  </div>
-</div>
+<InfoBox mono>
+  <InfoRows
+    rows={[
+      { label: "Bit index:", bits: "7654_3210", isIndex: true },
+      { label: "value:", bits: "1010_1101", highlightBits: [3] },
+    ]}
+  />
+</InfoBox>
 
 To focus on bit 3, we create a mask with `1` only at that position:
 
-<div class="bit-op-vis">
-  <div class="line">
-      <span class="label">mask =</span>
-      <div class="bits">
-          <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-          <span class="separator">_</span>
-          <span class="bit">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-      </div>
-      <span class="comment">// 1 &lt;&lt; 3, or 0b0000_1000</span>
-  </div>
-</div>
+<InfoBox mono>
+  <InfoRows
+    rows={[
+      { label: "mask =", bits: "0000_1000", comment: "// 1 << 3, or 0b0000_1000" },
+    ]}
+  />
+</InfoBox>
 
 Here’s another concept from college. If we apply **AND operator** to this value and mask:
 
-<div class="bit-op-vis">
-  <div class="line">
-    <span class="label">value</span>
-    <div class="bits">
-      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
-    </div>
-  </div>
-  <div class="line">
-    <span class="op-symbol">&amp;</span>
-    <div class="bits">
-      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-    </div>
-    <span class="comment">// mask</span>
-  </div>
-  <hr>
-  <div class="line">
-    <span class="label">result</span>
-    <div class="bits">
-      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-    </div>
-    <span class="comment">// non-zero</span>
-  </div>
-</div>
+<InfoBox mono>
+  <InfoRows
+    highlightBits={[3]}
+    rows={[
+      { label: "value", bits: "1010_1101" },
+      { op: "&", bits: "0000_1000", comment: "// mask" },
+      "hr",
+      { label: "result", bits: "0000_1000", comment: "// non-zero" },
+    ]}
+  />
+</InfoBox>
 
 We can check:
 - If bit 3 is `1`, result is non-zero.
@@ -427,65 +222,39 @@ We can check:
 
 If the value had been, say:
 
-<div class="bit-op-vis">
-  <div class="line">
-    <span class="label">value</span>
-    <div class="bits">
-      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">0</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
-    </div>
-    <span class="comment">// 0b1010_0101</span>
-  </div>
-  <div class="line">
-    <span class="op-symbol">&amp;</span>
-    <div class="bits">
-      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-    </div>
-    <span class="comment">// mask</span>
-  </div>
-  <hr>
-  <div class="line">
-    <span class="label">result</span>
-    <div class="bits">
-      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-    </div>
-    <span class="comment">// zero</span>
-  </div>
-</div>
+<InfoBox mono>
+  <InfoRows
+    highlightBits={[3]}
+    rows={[
+      { label: "value", bits: "1010_0101", comment: "// 0b1010_0101" },
+      { op: "&", bits: "0000_1000", comment: "// mask" },
+      "hr",
+      { label: "result", bits: "0000_0000", comment: "// zero" },
+    ]}
+  />
+</InfoBox>
 
 From this, we can see that in the first value, bit 3 was 1 (result is non-zero), while in the second value, bit 3 was 0 (result is zero). This is great, because now we have a tool to check whether a bit is 0 or 1 in our arsenal.
 
 Similarly, if we apply **OR operator** to this value and mask:
 
-<div class="bit-op-vis">
-  <div class="line">
-    <span class="label">value</span>
-    <div class="bits">
-      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">0</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
-    </div>
-    <span class="comment">// original had bit 3 as 0</span>
-  </div>
-  <div class="line">
-    <span class="op-symbol">|</span>
-    <div class="bits">
-      <span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">0</span><span class="bit">0</span><span class="bit">0</span>
-    </div>
-    <span class="comment">// mask</span>
-  </div>
-  <hr>
-  <div class="line">
-    <span class="label">result</span>
-    <div class="bits">
-      <span class="bit">1</span><span class="bit">0</span><span class="bit">1</span><span class="bit">0</span><span class="separator">_</span><span class="bit highlight">1</span><span class="bit">1</span><span class="bit">0</span><span class="bit">1</span>
-    </div>
-    <span class="comment">// bit 3 is now 1</span>
-  </div>
-</div>
+<InfoBox mono>
+  <InfoRows
+    highlightBits={[3]}
+    rows={[
+      { label: "value", bits: "1010_0101", comment: "// original had bit 3 as 0" },
+      { op: "|", bits: "0000_1000", comment: "// mask" },
+      "hr",
+      { label: "result", bits: "1010_1101", comment: "// bit 3 is now 1" },
+    ]}
+  />
+</InfoBox>
 
 Proving that by applying the **OR operator**, we can always set a specific bit to 1, no matter what its previous value was.
 
 Now, let us take another look at our get and set methods:
 
-```rust
+```rust title="src/bit_array.rs"
 impl BitArray {
   ...
     pub fn set(&mut self, index: usize) -> Option<bool> {
@@ -511,7 +280,7 @@ As you can see, we start by calculating a mask, and one by one, for every bit we
 
 We will introduce a final method to our bit array implementation:
 
-```rust
+```rust title="src/bit_array.rs"
 impl BitArray {
   ...
     pub fn count_ones(&self) -> usize {
@@ -535,7 +304,7 @@ We’ve already mentioned that we need **k** different hash functions for a Bloo
 ### 1. (In lack of a better term) Seeded Hashing
 This is straightforward. Let’s imagine the following function:
 
-```rust
+```rust title="src/hash.rs"
 use std::hash::{DefaultHasher, Hash, Hasher};
 ...
 pub fn generate<T: Hash>(item: &T, seed: u64) -> u64 {
@@ -593,7 +362,7 @@ After leaving all this behind, it is time to have some fun. Let's write some cod
 
 Remember our generate function:
 
-```rust
+```rust title="src/hash.rs"
 use std::hash::{DefaultHasher, Hash, Hasher};
 
 pub fn generate<T: Hash>(item: &T, seed: u64) -> u64 {
@@ -606,7 +375,7 @@ pub fn generate<T: Hash>(item: &T, seed: u64) -> u64 {
 
 We are going to use this as our base and write an iterator:
 
-```rust
+```rust title="src/hash.rs"
 pub fn iter<T: Hash>(item: &T, m: usize, k: usize) 
 -> impl Iterator<Item = usize> + '_ {
     let first_hash = generate(&item, 0);
@@ -639,7 +408,7 @@ Remember these letters I constantly write in bold? **k**, **m**, and **n**? Well
 
 We are going to arrange them inside a configuration struct. So let us come up with a _Builder_ to construct one:
 
-```rust
+```rust title="src/bloom_filter.rs"
 pub struct BloomFilterConfig {
     m: usize, // Number of bits in the bit array
     n: usize, // Expected number of inserted elements
@@ -708,7 +477,7 @@ We set **k**, **m** and **n**, and if they are not provided by the user, we fall
 
 Then, we define our data model:
 
-```rust
+```rust title="src/bloom_filter.rs"
 pub struct BloomFilter {
     bit_array: BitArray,
     config: BloomFilterConfig,
@@ -717,7 +486,7 @@ pub struct BloomFilter {
 
 and a constructor:
 
-```rust
+```rust title="src/bloom_filter.rs"
 impl BloomFilter {
     pub fn new(config: BloomFilterConfig) -> Self {
         Self {
@@ -729,7 +498,7 @@ impl BloomFilter {
 ```
 
 Let us also move our hash functions into a sealed module:
-```rust
+```rust title="src/bloom_filter.rs"
 mod hash {
     use std::hash::{DefaultHasher, Hash, Hasher};
 
@@ -758,7 +527,7 @@ I know this post may have felt a bit long, but from now on, things will move fas
 
 Let us implement the set operation first:
 
-```rust
+```rust title="src/bloom_filter.rs"
 impl BloomFilter {
   ...
     pub fn insert<T: Hash>(&mut self, item: &T) {
@@ -773,7 +542,7 @@ It is extremely easy to grasp, isn't it? We just iterate over generated hashes, 
 
 get operation is also pretty straightforward:
 
-```rust
+```rust title="src/bloom_filter.rs"
 impl BloomFilter {
   ...
     pub fn contains<T: Hash>(&self, item: &T) -> bool {
@@ -790,7 +559,7 @@ That concludes a complete Bloom Filter implementation. But we have to talk about
 ## Determining k, m, and n
 As you might remember from the last chapter, we have to define a configuration like this:
 
-```rust
+```rust title="src/main.rs"
 let config = BloomFilterConfigBuilder::new()
     .k(3)
     .m(1)
@@ -800,7 +569,7 @@ let config = BloomFilterConfigBuilder::new()
 
 and create a bloom filter by calling the constructor:
 
-```rust
+```rust title="src/main.rs"
 let mut bloom_filter = BloomFilter::new(config);
 ```
 
@@ -822,7 +591,7 @@ $$
 
 We no longer need a _Builder_ anymore:
 
-```rust
+```rust title="src/bloom_filter.rs"
 impl BloomFilter {
     pub fn new(config: BloomFilterConfig) -> Self {
         Self {
@@ -852,7 +621,7 @@ $$
 
 which translates to Rust as:
 
-```rust
+```rust title="src/bloom_filter.rs"
 pub fn theoretical_false_positive_rate(&self) -> f64 {
     let m = self.config.m as f64;
     let k = self.config.k as f64;
@@ -873,7 +642,7 @@ $$
 
 In Rust:
 
-```rust
+```rust title="src/bloom_filter.rs"
 pub fn capacity_utilization(&self) -> f64 {
     let m = self.config.m as f64;
     let k = self.config.k as f64;

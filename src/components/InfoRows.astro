@@ -1,0 +1,145 @@
+---
+export interface InfoRow {
+  type?: "line" | "hr";
+  label?: string;
+  op?: string;
+  bits?: string;
+  comment?: string;
+  isIndex?: boolean;
+  highlightBits?: number[];
+}
+
+interface Props {
+  rows: (InfoRow | "hr")[];
+  highlightBits?: number[];
+}
+
+const { rows, highlightBits = [] } = Astro.props;
+
+function parseBits(bits: string, rowHighlights: number[]) {
+  const chars = Array.from(bits);
+  const totalBits = chars.filter((c) => c !== "_" && c !== " ").length;
+  let seenBits = 0;
+
+  return chars.map((char) => {
+    if (char === "_" || char === " ") {
+      return { char, isSeparator: true, isHighlighted: false };
+    }
+    const bitIndexFromRight = totalBits - 1 - seenBits;
+    seenBits += 1;
+    return {
+      char,
+      isSeparator: false,
+      isHighlighted: rowHighlights.includes(bitIndexFromRight),
+    };
+  });
+}
+---
+
+<div class="info-rows">
+  {
+    rows.map((entry) => {
+      if (entry === "hr" || entry.type === "hr") {
+        return <hr />;
+      }
+
+      const activeHighlights = entry.highlightBits ?? highlightBits;
+      const tokens = entry.bits ? parseBits(entry.bits, activeHighlights) : [];
+
+      return (
+        <div class:list={["line", { "index-line": entry.isIndex }]}>
+          {entry.op !== undefined ? (
+            <span class="op-symbol">{entry.op}</span>
+          ) : (
+            <span class="label">{entry.label ?? ""}</span>
+          )}
+          <div class="bits">
+            {tokens.map((token) =>
+              token.isSeparator ? (
+                <span class="separator">{token.char}</span>
+              ) : (
+                <span class:list={["bit", { highlight: token.isHighlighted }]}>
+                  {token.char}
+                </span>
+              )
+            )}
+          </div>
+          {entry.comment && <span class="comment">{entry.comment}</span>}
+        </div>
+      );
+    })
+  }
+</div>
+
+<style>
+  .info-rows {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
+  }
+
+  .line {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .line:last-child {
+    margin-bottom: 0;
+  }
+
+  .label,
+  .op-symbol {
+    min-width: 11ch;
+    text-align: right;
+    padding-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  .label {
+    color: var(--info-box-accent, #89ddff);
+  }
+
+  .op-symbol {
+    color: var(--info-box-secondary, #c792ea);
+    font-weight: bold;
+  }
+
+  .bits {
+    display: flex;
+  }
+
+  .bit {
+    width: 2.2ch;
+    text-align: center;
+  }
+
+  .bit.highlight {
+    color: var(--info-box-highlight, #f78c6c);
+    font-weight: bold;
+    transform: scale(1.15);
+  }
+
+  .separator {
+    width: 2ch;
+    text-align: center;
+    color: var(--info-box-muted, #717171);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--info-box-rule, #3a3a3a);
+    margin: 0.75rem 0;
+  }
+
+  .comment {
+    color: var(--info-box-muted, #717171);
+    font-style: italic;
+    margin-left: 1.5rem;
+  }
+
+  .index-line .bit {
+    color: var(--info-box-info, #82aaff);
+    font-size: 0.85em;
+  }
+</style>

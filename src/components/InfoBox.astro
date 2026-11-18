@@ -1,0 +1,52 @@
+---
+interface Props {
+  title?: string;
+  mono?: boolean;
+}
+
+const { title, mono = false } = Astro.props;
+---
+
+<figure class:list={["info-box", { mono }]} aria-label={title ?? "Information box"}>
+  {title && <figcaption class="info-box-title">{title}</figcaption>}
+  <div class="info-box-body">
+    <slot />
+  </div>
+</figure>
+
+<style>
+  .info-box {
+    --info-box-bg: #ffffff;
+    --info-box-border: #dee2e6;
+    --info-box-fg: #212529;
+    --info-box-accent: #0077aa;
+    --info-box-secondary: #7c4dff;
+    --info-box-highlight: #d84315;
+    --info-box-info: #3949ab;
+    --info-box-muted: #6c757d;
+    --info-box-rule: #dee2e6;
+
+    background-color: var(--info-box-bg);
+    color: var(--info-box-fg);
+    border: 1px solid var(--info-box-border);
+    padding: 1.25rem 1.5rem;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+
+  .info-box.mono {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
+  }
+
+  .info-box-title {
+    font-size: 0.8rem;
+    color: var(--info-box-muted);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
