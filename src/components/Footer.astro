@@ -2,14 +2,19 @@
 import { config } from '../config';
 import MobileCategories from './MobileCategories.astro';
 
-const { copyright } = config.footer;
+const { copyright, license } = config.footer;
 ---
 
 <footer>
   <div class="mobile-only">
     <MobileCategories />
   </div>
-  <p>{copyright}</p>
+  <p>
+    {copyright} Licensed under{' '}
+    <a href={license.url} rel="license noopener noreferrer" target="_blank">
+      {license.text}
+    </a>.
+  </p>
 </footer>
 
 <style>
@@ -24,6 +29,11 @@ const { copyright } = config.footer;
     margin: 0;
     font-size: 0.875rem;
     color: var(--color-gray-dark);
+  }
+
+  footer a {
+    color: inherit;
+    text-decoration: underline;
   }
 </style>
 

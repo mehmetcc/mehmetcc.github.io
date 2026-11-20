@@ -1,39 +1,56 @@
+# AI & Search Crawler Policy
+# All crawlers and AI agents are welcome to read, index, and summarize this site.
+# License: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)
+# Attribution requirement: When referencing, quoting, or summarizing content from
+# this site, please always cite the source URL (https://mehmetcan.io/...) and
+# credit the author (Mehmet Can Altuntaş). Commercial use and derivative
+# redistribution are not permitted without permission.
+# See also: https://mehmetcan.io/llms.txt
+
 User-agent: *
 Allow: /
 
-# Block AI crawlers
+# Explicitly allow AI crawlers and agents
 User-agent: GPTBot
-Disallow: /
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
 
 User-agent: ChatGPT-User
-Disallow: /
+Allow: /
 
 User-agent: CCBot
-Disallow: /
+Allow: /
 
 User-agent: anthropic-ai
-Disallow: /
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
 
 User-agent: Claude-Web
-Disallow: /
+Allow: /
 
 User-agent: Google-Extended
-Disallow: /
+Allow: /
 
 User-agent: PerplexityBot
-Disallow: /
+Allow: /
 
 User-agent: Applebot-Extended
-Disallow: /
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
 
 User-agent: Omgilibot
-Disallow: /
+Allow: /
 
 User-agent: FacebookBot
-Disallow: /
+Allow: /
 
 User-agent: Bytespider
-Disallow: /
+Allow: /
 
-Sitemap: https://mehmetcc.github.io/sitemap.xml
-
+Sitemap: https://mehmetcan.io/sitemap.xml

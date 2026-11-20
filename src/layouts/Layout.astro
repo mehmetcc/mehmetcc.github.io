@@ -52,8 +52,12 @@ const metaDescription = description || config.site.description;
     <meta name="title" content={title} />
     <meta name="description" content={metaDescription} />
 
-    <!-- Block AI Crawlers - robots.txt is primary, this provides additional directive -->
-    <meta name="robots" content="index, follow, noai, noimageai" />
+    <!-- Allow search and AI crawlers; license & attribution via rel="license" and robots.txt -->
+    <meta name="robots" content="index, follow" />
+    <link
+      rel="license"
+      href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+    />
 
     <!-- Canonical URL -->
     <link rel="canonical" href={canonicalURL} />
