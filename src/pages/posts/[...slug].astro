@@ -109,6 +109,18 @@ const pubDateISO = post.data.pubDate.toISOString();
         data-lang="en"
         crossorigin="anonymous"
         async></script>
+      <script is:inline>
+        (function () {
+          var theme =
+            document.documentElement.dataset.theme === "dark"
+              ? "dark"
+              : "light";
+          var giscus = document.querySelector(
+            'script[src="https://giscus.app/client.js"]',
+          );
+          if (giscus) giscus.setAttribute("data-theme", theme);
+        })();
+      </script>
     </div>
   </article>
 </Layout>
@@ -164,13 +176,13 @@ const pubDateISO = post.data.pubDate.toISOString();
 
   .post-tags {
     font-size: 0.8em;
-    color: #999;
+    color: var(--color-subtle);
     margin-top: 0;
     text-align: center;
   }
 
   .post-tags a {
-    color: #999;
+    color: var(--color-subtle);
     text-decoration: none;
   }
 
@@ -197,7 +209,7 @@ const pubDateISO = post.data.pubDate.toISOString();
     height: 24px;
     display: block;
     fill: currentColor;
-    color: black;
+    color: var(--color-black);
   }
 
   .footer-right {

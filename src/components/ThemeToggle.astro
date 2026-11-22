@@ -1,0 +1,145 @@
+---
+import { config } from "../config";
+
+const { lightLabel, darkLabel } = config.theme;
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  aria-label={lightLabel}
+  data-light-label={lightLabel}
+  data-dark-label={darkLabel}
+>
+  <svg
+    class="icon icon-moon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+  <svg
+    class="icon icon-sun"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--color-gray-medium);
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    color: var(--color-gray-dark);
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-black);
+    border-color: var(--color-gray-dark);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--color-gray-dark);
+    outline-offset: 2px;
+  }
+
+  .icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .icon-sun {
+    display: none;
+  }
+
+  :global(html[data-theme="dark"]) .icon-moon {
+    display: none;
+  }
+
+  :global(html[data-theme="dark"]) .icon-sun {
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .theme-toggle {
+      top: 1rem;
+      left: 1rem;
+    }
+  }
+</style>
+
+<script>
+  type Theme = "light" | "dark";
+
+  function currentTheme(): Theme {
+    return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  }
+
+  function syncGiscus(theme: Theme) {
+    const iframe = document.querySelector<HTMLIFrameElement>(
+      "iframe.giscus-frame",
+    );
+    iframe?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme } } },
+      "https://giscus.app",
+    );
+  }
+
+  function updateToggle(button: HTMLButtonElement) {
+    const isDark = currentTheme() === "dark";
+    button.setAttribute(
+      "aria-label",
+      isDark ? button.dataset.darkLabel! : button.dataset.lightLabel!,
+    );
+    button.title = isDark
+      ? button.dataset.darkLabel!
+      : button.dataset.lightLabel!;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>(".theme-toggle").forEach((button) => {
+    updateToggle(button);
+
+    button.addEventListener("click", () => {
+      const next: Theme = currentTheme() === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // Ignore storage failures (e.g. private mode).
+      }
+      updateToggle(button);
+      syncGiscus(next);
+    });
+  });
+
+  // Keep the comments widget in sync once giscus has loaded.
+  window.addEventListener("load", () => syncGiscus(currentTheme()));
+</script>

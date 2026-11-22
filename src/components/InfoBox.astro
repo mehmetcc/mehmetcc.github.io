@@ -37,6 +37,18 @@ const { title, mono = false } = Astro.props;
     overflow-x: auto;
   }
 
+  :global(html[data-theme="dark"]) .info-box {
+    --info-box-bg: var(--color-surface);
+    --info-box-border: var(--color-gray-medium);
+    --info-box-fg: var(--color-black);
+    --info-box-accent: #6cb6ff;
+    --info-box-secondary: #b392f0;
+    --info-box-highlight: #ff8a65;
+    --info-box-info: #82aaff;
+    --info-box-muted: var(--color-subtle);
+    --info-box-rule: var(--color-gray-medium);
+  }
+
   .info-box.mono {
     font-family:
       ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;

@@ -1,7 +1,8 @@
 <div
-  style="font-family:sans-serif; width:100%; margin:1.5rem 0; padding:1.25rem 1.5rem; border:1px solid var(--color-gray-medium, #dee2e6); border-radius:6px; background:#ffffff; overflow-x: auto;"
+  class="bf-widget"
+  style="font-family:sans-serif; width:100%; margin:1.5rem 0; padding:1.25rem 1.5rem; border:1px solid var(--bf-border); border-radius:6px; background:var(--bf-bg); color:var(--bf-fg); overflow-x: auto;"
 >
-  <h3 style="margin-bottom:15px; text-align:center; color:#333; font-size:1.5em;">
+  <h3 style="margin-bottom:15px; text-align:center; color:var(--bf-fg); font-size:1.5em;">
     Bloom Filter Visualizer
   </h3>
 
@@ -9,7 +10,7 @@
     <input
       id="bfInput"
       placeholder="Enter a value..."
-      style="flex:1; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:1em; outline:none; transition:border-color 0.2s;"
+      style="flex:1; padding:10px; border:1px solid var(--bf-input-border); border-radius:6px; font-size:1em; outline:none; transition:border-color 0.2s; background:var(--bf-surface); color:var(--bf-fg);"
     />
     <button
       id="bfAddBtn"
@@ -36,21 +37,40 @@
 
   <div
     id="bitContainer"
-    style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:15px; padding:10px; background:#f0f4f8; border-radius:8px;"
+    style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:15px; padding:10px; background:var(--bf-surface); border-radius:8px;"
   >
   </div>
 
-  <div style="font-size:0.95em; margin-bottom:10px; text-align:center; color:#555;">
+  <div style="font-size:0.95em; margin-bottom:10px; text-align:center; color:var(--bf-subtle);">
     <span id="hash1Display">Hash1: -</span> |
     <span id="hash2Display">Hash2: -</span>
   </div>
 
   <div
     id="bfMessage"
-    style="font-size:0.95em; margin-top:10px; min-height:1.2em; text-align:center; color:#333; font-weight:500;"
+    style="font-size:0.95em; margin-top:10px; min-height:1.2em; text-align:center; color:var(--bf-fg); font-weight:500;"
   >
   </div>
 </div>
+
+<style>
+  .bf-widget {
+    --bf-bg: var(--color-surface);
+    --bf-border: var(--color-gray-medium);
+    --bf-fg: var(--color-black);
+    --bf-subtle: var(--color-gray-dark);
+    --bf-surface: #f0f4f8;
+    --bf-input-border: var(--color-gray-medium);
+    --bf-empty: #e0e0e0;
+    --bf-empty-fg: #666666;
+  }
+
+  :global(html[data-theme="dark"]) .bf-widget {
+    --bf-surface: #21262d;
+    --bf-empty: #30363d;
+    --bf-empty-fg: #7d8590;
+  }
+</style>
 
 <script is:inline>
   (function () {
@@ -84,8 +104,8 @@
         div.style.borderRadius = "50%";
         div.style.background = b
           ? "linear-gradient(135deg, #667eea, #764ba2)"
-          : "#e0e0e0";
-        div.style.color = b ? "#fff" : "#666";
+          : "var(--bf-empty)";
+        div.style.color = b ? "#fff" : "var(--bf-empty-fg)";
         div.style.display = "flex";
         div.style.alignItems = "center";
         div.style.justifyContent = "center";
@@ -170,7 +190,7 @@
       bfInput.style.borderColor = "#667eea";
     });
     bfInput?.addEventListener("blur", () => {
-      bfInput.style.borderColor = "#ccc";
+      bfInput.style.borderColor = "var(--bf-input-border)";
     });
   })();
 </script>

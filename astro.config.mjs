@@ -10,10 +10,13 @@ export default defineConfig({
   site: "https://mehmetcan.io",
   integrations: [
     expressiveCode({
-      themes: ["github-light"],
+      themes: ["github-light", "github-dark"],
+      useDarkModeMediaQuery: false,
+      themeCssSelector: (theme) =>
+        theme.type === "dark" ? '[data-theme="dark"]' : ":root",
       styleOverrides: {
         borderRadius: "6px",
-        borderColor: "#dee2e6",
+        borderColor: "var(--color-gray-medium)",
         frames: {
           frameBoxShadowCssValue: "none",
         },

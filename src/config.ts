@@ -27,6 +27,13 @@ export const config = {
     },
   },
 
+  // Theme toggle
+  theme: {
+    toggleLabel: "Toggle dark mode",
+    lightLabel: "Switch to dark mode",
+    darkLabel: "Switch to light mode",
+  },
+
   // Navigation labels
   navigation: {
     previous: "Previous",
