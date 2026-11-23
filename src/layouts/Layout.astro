@@ -1,7 +1,6 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import Categories from "../components/Categories.astro";
 import { config } from "../config";
 
 interface Props {
@@ -102,16 +101,13 @@ const metaDescription = description || config.site.description;
     />
   </head>
   <body>
+    <Header />
     <div class="container">
-      <div class="desktop-only">
-        <Categories />
-      </div>
-      <Header />
       <main>
         <slot />
       </main>
-      <Footer />
     </div>
+    <Footer />
   </body>
 </html>
 
@@ -157,6 +153,9 @@ const metaDescription = description || config.site.description;
     line-height: 1.7;
     color: var(--color-black);
     background-color: var(--color-white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition:
@@ -165,16 +164,18 @@ const metaDescription = description || config.site.description;
   }
 
   .container {
+    width: 100%;
     max-width: 70ch;
     margin: 0 auto;
-    padding: 0 2rem;
-    min-height: 100vh;
+    padding: 0 1.5rem;
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
 
   main {
     flex: 1;
+    padding-top: 2rem;
   }
 
   h1,

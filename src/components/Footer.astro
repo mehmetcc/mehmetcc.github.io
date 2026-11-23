@@ -5,35 +5,49 @@ import MobileCategories from './MobileCategories.astro';
 const { copyright, license } = config.footer;
 ---
 
-<footer>
-  <div class="mobile-only">
-    <MobileCategories />
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="mobile-only">
+      <MobileCategories />
+    </div>
+    <p>
+      {copyright} Licensed under{' '}
+      <a href={license.url} rel="license noopener noreferrer" target="_blank">
+        {license.text}
+      </a>.
+    </p>
   </div>
-  <p>
-    {copyright} Licensed under{' '}
-    <a href={license.url} rel="license noopener noreferrer" target="_blank">
-      {license.text}
-    </a>.
-  </p>
 </footer>
 
 <style>
-  footer {
+  .site-footer {
+    width: 100%;
     margin-top: 4rem;
-    padding: 2rem 0;
     border-top: 1px solid var(--color-gray-medium);
+  }
+
+  .footer-inner {
+    max-width: 70ch;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
     text-align: center;
   }
 
-  footer p {
+  .site-footer p {
     margin: 0;
     font-size: 0.875rem;
     color: var(--color-gray-dark);
   }
 
-  footer a {
+  .site-footer a {
     color: inherit;
     text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .footer-inner {
+      padding: 2rem 1rem;
+    }
   }
 </style>
 
