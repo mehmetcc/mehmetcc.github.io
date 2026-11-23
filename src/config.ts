@@ -20,7 +20,7 @@ export const config = {
 
   // Footer
   footer: {
-    copyright: "© 2024 Mehmet Can Altuntaş.",
+    copyright: "© 2026 Mehmet Can Altuntaş.",
     license: {
       text: "CC BY-NC-ND 4.0",
       url: "https://creativecommons.org/licenses/by-nc-nd/4.0/",
