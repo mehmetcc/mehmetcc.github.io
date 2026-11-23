@@ -1,10 +1,12 @@
 ---
 import { config } from '../config';
+import ThemeToggle from './ThemeToggle.astro';
 
 const { title } = config.header;
 ---
 
 <header>
+  <ThemeToggle />
   <a href="/">
     <p class="site-title">{title}</p>
   </a>

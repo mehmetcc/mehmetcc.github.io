@@ -2,7 +2,6 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Categories from "../components/Categories.astro";
-import ThemeToggle from "../components/ThemeToggle.astro";
 import { config } from "../config";
 
 interface Props {
@@ -103,7 +102,6 @@ const metaDescription = description || config.site.description;
     />
   </head>
   <body>
-    <ThemeToggle />
     <div class="container">
       <div class="desktop-only">
         <Categories />
