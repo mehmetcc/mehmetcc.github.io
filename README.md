@@ -8,6 +8,17 @@ Create a new post by running the script:
 npm run create-post
 ```
 
+The script creates a Markdown (`.md`) post in `src/content/posts/`. It requires a
+title and description, deduplicates tags, safely escapes frontmatter values, and
+refuses to overwrite an existing post with the same slug.
+
+Pass `--mdx` to create an `.mdx` post instead, which is required if the post
+needs to import components:
+
+```bash
+npm run create-post -- --mdx
+```
+
 In order to run locally:
 
 ```bash

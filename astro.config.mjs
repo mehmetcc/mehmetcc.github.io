@@ -8,6 +8,10 @@ import remarkMath from "remark-math";
 // https://astro.build/config
 export default defineConfig({
   site: "https://mehmetcan.io",
+  redirects: {
+    "/categories/Data Structures": "/categories/data-structures",
+    "/categories/Bloom Filters": "/categories/bloom-filters",
+  },
   integrations: [
     expressiveCode({
       themes: ["github-light", "github-dark"],

@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { config } from "../../config";
+import { tagToSlug } from "../../utils/tags";
 
 const allPosts = await getCollection("posts");
 const allTags = allPosts.flatMap((post) => post.data.tags || []);
@@ -14,7 +15,7 @@ const uniqueTags = [...new Set(allTags)];
     <div class="tag-list">
       {uniqueTags.map((tag, index) => (
         <>
-          <a href={`/categories/${tag}`}>{tag}</a>
+          <a href={`/categories/${tagToSlug(tag)}`}>{tag}</a>
           {index < uniqueTags.length - 1 && ' · '}
         </>
       ))}

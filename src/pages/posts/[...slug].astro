@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { config } from "../../config";
+import { tagToSlug } from "../../utils/tags";
 import { Facebook, X as Twitter, Reddit } from "simple-icons-astro";
 
 export async function getStaticPaths() {
@@ -41,7 +42,7 @@ const pubDateISO = post.data.pubDate.toISOString();
           <div class="post-tags">
             {post.data.tags.map((tag, index) => (
               <>
-                <a href={`/categories/${tag}`}>{tag}</a>
+                <a href={`/categories/${tagToSlug(tag)}`}>{tag}</a>
                 {index < post.data.tags.length - 1 && " · "}
               </>
             ))}

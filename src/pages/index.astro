@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { config } from "../config";
+import { tagToSlug } from "../utils/tags";
 
 const allPosts = await getCollection("posts");
 const sortedPosts = allPosts.sort(
@@ -41,7 +42,7 @@ const canonicalURL = new URL("/", config.site.url);
             <div class="post-tags">
               {post.data.tags.map((tag, index) => (
                 <>
-                  <a href={`/categories/${tag}`}>{tag}</a>
+                  <a href={`/categories/${tagToSlug(tag)}`}>{tag}</a>
                   {index < post.data.tags.length - 1 && ' · '}
                 </>
               ))}
